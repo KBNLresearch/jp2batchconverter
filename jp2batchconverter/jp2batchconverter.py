@@ -98,8 +98,8 @@ def processFiles(listFiles, dirIn, dirOut):
         fileOut = os.path.abspath(os.path.join(filePathOut, fileNameOut))
 
         ## TEST
-        print(fileIn)
-        print(fileOut)
+        #print(fileIn)
+        #print(fileOut)
         ## TEST
         kduDict = kakadu.compress(fileIn, fileOut)
 

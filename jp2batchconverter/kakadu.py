@@ -2,8 +2,8 @@
 """Kakadu wrapper module"""
 
 import os
-import io
 import subprocess as sub
+import logging
 
 
 """
@@ -72,12 +72,17 @@ def compress(imageIn, jp2Out):
         status = p.returncode
 
     except Exception:
-        # I don't even want to to start thinking how one might end up here ...
-        pass
+        logging.error("running Kakadu resulted in an exception")
 
-    print(out)
-    print(err)
-    print(status)
+    logging.info("Kakadu exit status: {}".format(status))
+
+    if status != 0:
+        logging.error("abnormal Kakadu exit status")
+
+
+    #print(out)
+    #print(err)
+    #print(status)
 
     # All results to dictionary
     dictOut = {}
