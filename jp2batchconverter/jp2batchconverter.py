@@ -82,12 +82,26 @@ def processFiles(listFiles, dirIn, dirOut):
 
     for fileIn in listFiles:
         logging.info(("file: {}").format(fileIn))
-        fileIn = os.path.abspath(fileIn)
-        fileRel = os.path.relpath(fileIn, start=dirIn)
-        fileOut = os.path.abspath(os.path.join(dirOut, fileRel))
+        fileNameIn = os.path.basename(fileIn)
+        filePathIn = os.path.dirname(fileIn)
+        filePathInRel = os.path.relpath(filePathIn, start=dirIn)
+        filePathOut = os.path.abspath(os.path.join(dirOut, filePathInRel))
+
+        # Create filePathOut if it doesn't exist (including any missing parent dirs)
+        if not os.path.isdir(filePathOut):
+            os.makedirs(filePathOut)
+
+        # Construct name for output file
+        pre, ext = os.path.splitext(fileNameIn)
+        fileNameOut = ("{}.{}".format(pre, "jp2"))
+
+        fileOut = os.path.abspath(os.path.join(filePathOut, fileNameOut))
+
+        ## TEST
         print(fileIn)
         print(fileOut)
-        dictTest = kakadu.compress(fileIn, fileOut)
+        ## TEST
+        kduDict = kakadu.compress(fileIn, fileOut)
 
 
 def main():
