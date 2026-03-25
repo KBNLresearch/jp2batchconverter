@@ -33,6 +33,7 @@ class Kakadu:
             # sure if thisc works, or if Kakadu even uses this!
             os.environ['DYLD_LIBRARY_PATH'] = self.kdu_dir
 
+        # File I/O
         self.imageIn = ""
         self.jp2Out = ""
 
