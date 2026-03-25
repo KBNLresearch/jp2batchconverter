@@ -10,10 +10,12 @@ Copyright 2026, KB/National Library of the Netherlands
 
 import sys
 import os
+import io
 import shutil
 import time
 import argparse
 import csv
+import json
 import logging
 from lxml import etree
 from . import shared
@@ -46,6 +48,21 @@ def parseCommandLine():
     args = parser.parse_args()
 
     return args
+
+
+def getConfiguration(configFile):
+    """read configuration file and return contents as dictionary"""
+
+    configDict = {}
+
+    # Read config file to dictionary
+    try:
+        with io.open(configFile, 'r', encoding='utf-8') as f:
+            configDict = json.load(f)
+    except:
+        raise
+
+    return configDict
 
 
 def getFilesFromTree(rootDir, extensions):
@@ -97,7 +114,7 @@ def processFiles(listFiles, dirIn, dirOut):
 
         # Construct name for output file
         pre, ext = os.path.splitext(fileNameIn)
-        fileNameOut = ("{}.{}".format(pre, "jp2"))
+        fileNameOut = "{}.{}".format(pre, "jp2")
 
         fileOut = os.path.abspath(os.path.join(filePathOut, fileNameOut))
 
@@ -115,15 +132,15 @@ def main():
 
     # Path to configuration dir (from https://stackoverflow.com/a/53222876/1209004
     # and https://stackoverflow.com/a/13184486/1209004).
-    configpath = os.path.join(
+    configPath = os.path.join(
     os.environ.get('LOCALAPPDATA') or
     os.environ.get('XDG_CONFIG_HOME') or
     os.path.join(os.environ['HOME'], '.config'),
     "jp2batchconverter")
 
      # Create config directory if it doesn't exist already
-    if not os.path.isdir(configpath):
-        os.mkdir(configpath)
+    if not os.path.isdir(configPath):
+        os.mkdir(configPath)
 
     # Locate package directory
     packageDir = os.path.dirname(os.path.abspath(__file__))
@@ -133,8 +150,8 @@ def main():
     # Profile and schema locations in installed package and config folder
     profilesDirPackage = os.path.join(packageDir, "profiles")
     schemasDirPackage = os.path.join(packageDir, "schemas")
-    profilesDir = os.path.join(configpath, "profiles")
-    schemasDir = os.path.join(configpath, "schemas")
+    profilesDir = os.path.join(configPath, "profiles")
+    schemasDir = os.path.join(configPath, "schemas")
 
     # Check if package profiles and schemas dirs exist
     shared.checkDirExists(profilesDirPackage)
@@ -147,8 +164,18 @@ def main():
         shutil.copytree(schemasDirPackage, schemasDir)
     """
 
-    # TODO read from user-defined config file!
-    config.kdu_dir = "/home/johan/kakadu/"
+    configFile = os.path.join(configPath, "config.json")
+    if not os.path.isfile(configFile):
+        msg = "configuration file ({}) is missing".format(configFile)
+        shared.errorExit(msg)
+
+    # Read config file
+    configDict = getConfiguration(configFile)
+
+
+    # TODO validate contents of config file for completeness
+    config.kdu_dir = os.path.expanduser(configDict["kduDir"])
+    print(config.kdu_dir)
 
     # Get input from command line
     args = parseCommandLine()
@@ -161,12 +188,12 @@ def main():
         try:
             os.makedirs(dirOut)
         except exception:
-            msg = ("creation of output directory {} failed".format(outDir))
+            msg = "creation of output directory {} failed".format(outDir)
             shared.errorExit(msg)
 
     # Check if outDir is writable
     if not os.access(dirOut, os.W_OK):
-        msg = ("directory {} is not writable".format(outDir))
+        msg = "directory {} is not writable".format(outDir)
         shared.errorExit(msg)
 
     # Set up logging

@@ -1,0 +1,36 @@
+{
+    "kduDir": "~/kakadu",
+    "compressionProfiles":
+    [
+        {
+         "name": "KB_MASTER_LOSSLESS_01/01/2015",
+         "ratios": [2560,1280,640,320,160,80,40,20,10,5,0],
+         "params": ["Creversible=yes",
+                    "Clevels=5",
+                    "Corder=RPCL",
+                    "Stiles={1024,1024}",
+                    "Cblk={64,64}",
+                    "Cprecincts={256,256},{256,256},{128,128}",
+                    "Clayers=11",
+                    "Cuse_sop=yes",
+                    "Cuse_eph=yes",
+                    "Cmodes=SEGMARK",
+                    "-com KB_MASTER_LOSSLESS_01/01/2015"]
+        },
+        {
+         "name": "KB_ACCESS_LOSSY_01/01/2015",
+         "ratios": [2560,1280,640,320,160,80,40,20],
+         "params": ["Creversible=no",
+                    "Clevels=5",
+                    "Corder=RPCL",
+                    "Stiles={1024,1024}",
+                    "Cblk={64,64}",
+                    "Cprecincts={256,256},{256,256},{128,128}",
+                    "Clayers=8",
+                    "Cuse_sop=yes",
+                    "Cuse_eph=yes",
+                    "Cmodes=SEGMARK",
+                    "-com KB_ACCESS_LOSSY_01/01/2015"]
+        }
+    ]
+}

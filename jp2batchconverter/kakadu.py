@@ -17,11 +17,11 @@ class Kakadu:
         self.kdu_compress = os.path.join(os.path.normpath(self.kdu_dir), "kdu_compress")
         # Test if kdu_compress exists
         if not os.path.isfile(self.kdu_compress):
-            msg = ("kdu_compress binary ({}) is missing".format(self.kdu_compress))
+            msg = "kdu_compress binary ({}) is missing".format(self.kdu_compress)
             shared.errorExit(msg)
         # Test if it is executable
         if not os.access(self.kdu_compress, os.X_OK):
-            msg = ("kdu_compress binary ({}) is not executable".format(self.kdu_compress))
+            msg = "kdu_compress binary ({}) is not executable".format(self.kdu_compress)
             shared.errorExit(msg)
 
         # Set LD_LIBRARY_PATH to kdu_dir (this only sets the variable for this
@@ -30,7 +30,7 @@ class Kakadu:
             os.environ['LD_LIBRARY_PATH'] = self.kdu_dir
         elif sys.platform == 'darwin':
             # TODO - this is the MacOS equivalent of LD_LIBRARY_PATH, but not
-            # sure if thisc works, or if Kakadu even uses this!
+            # sure if this works, or if Kakadu even uses this!
             os.environ['DYLD_LIBRARY_PATH'] = self.kdu_dir
 
         # File I/O
