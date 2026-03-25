@@ -43,9 +43,12 @@ def compress(imageIn, jp2Out):
 
     # Set LD_LIBRARY_PATH to kdu_dir (this only sets the variable for thus process,
     # not system wide)
+    ## TODO skip for Windows system (how does this work on MacOS?)
     os.environ['LD_LIBRARY_PATH'] = kdu_dir
 
     ## Bitrates for RGB images, following KB specs
+    ## TODO read this from config file, probably defined as compression ratios from
+    # which bitrates are then calculated depending on number of colour components in input image
     bitratesMaster="-,4.8,2.4,1.2,0.6,0.3,0.15,0.075,0.0375,0.01875,0.009375"
     bitratesAccess="1.2,0.6,0.3,0.15,0.075,0.0375,0.01875,0.009375"
     ## Bitrates for grayscale images, following KB specs

@@ -156,7 +156,11 @@ def main():
     # Check if files / directories exist
     shared.checkDirExists(dirIn)
     if not os.path.isdir(dirOut):
-        os.makedirs(dirOut)
+        try:
+            os.makedirs(dirOut)
+        except exception:
+            msg = ("creation of output directory {} failed".format(outDir))
+            shared.errorExit(msg)
 
     # Check if outDir is writable
     if not os.access(dirOut, os.W_OK):
@@ -173,21 +177,18 @@ def main():
 
     # Start clock for statistics
     start = time.time()
-    print("jp2batchconverter started: " + time.asctime())
+    logging.info("jp2batchconverter started: {}".format(time.asctime()))
 
     # Process all files
     processFiles(listFiles, dirIn, dirOut)
 
     # Timing output
     end = time.time()
-
-    print("jp2batchconverter ended: " + time.asctime())
-
+    logging.info("jp2batchconverter ended: {}".format(time.asctime()))
     # Elapsed time (seconds)
     timeElapsed = end - start
     timeInMinutes = round((timeElapsed / 60), 2)
-
-    print("Elapsed time: {} minutes".format(timeInMinutes))
+    logging.info("Elapsed time: {} minutes".format(timeInMinutes))
 
 
 
