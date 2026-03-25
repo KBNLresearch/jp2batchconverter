@@ -18,7 +18,7 @@ import logging
 from lxml import etree
 from . import shared
 from . import config
-from . import kakadu
+from .kakadu import Kakadu
 
 __version__ = "0.1.0"
 
@@ -81,6 +81,9 @@ def getFilesFromTree(rootDir, extensions):
 def processFiles(listFiles, dirIn, dirOut):
     """Process all files in list"""
 
+    # Start Kakadu class instance
+    kakadu = Kakadu()
+
     for fileIn in listFiles:
         logging.info(("file: {}").format(fileIn))
         fileNameIn = os.path.basename(fileIn)
@@ -98,11 +101,10 @@ def processFiles(listFiles, dirIn, dirOut):
 
         fileOut = os.path.abspath(os.path.join(filePathOut, fileNameOut))
 
-        ## TEST
-        #print(fileIn)
-        #print(fileOut)
-        ## TEST
-        kduDict = kakadu.compress(fileIn, fileOut)
+        # Pass I/O to Kakadu instance and run the conversion
+        kakadu.imageIn = fileIn
+        kakadu.jp2Out = fileOut
+        kakadu.compress()
 
 
 def main():
