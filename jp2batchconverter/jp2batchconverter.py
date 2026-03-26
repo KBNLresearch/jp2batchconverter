@@ -18,11 +18,9 @@ import csv
 import json
 import logging
 from lxml import etree
-from PIL import Image
-from PIL import ImageChops
-from PIL import ImageStat
 from . import shared
 from .grok import Grok
+from . import pixelcheck
 
 __version__ = "0.1.0"
 
@@ -104,8 +102,8 @@ def processFiles(listFiles, dirIn, dirOut, configDict):
     grok = Grok()
     grok.configDict = configDict
     grok.configure()
-    #grok.compressionProfile = "KB_MASTER_LOSSLESS_01/01/2015"
-    grok.compressionProfile = "KB_ACCESS_LOSSY_01/01/2015"
+    grok.compressionProfile = "KB_MASTER_LOSSLESS_01/01/2015"
+    #grok.compressionProfile = "KB_ACCESS_LOSSY_01/01/2015"
 
     for fileIn in listFiles:
         logging.info(("file: {}").format(fileIn))
@@ -130,12 +128,9 @@ def processFiles(listFiles, dirIn, dirOut, configDict):
         grok.compress()
 
         # Pixel check
-        imgSource = Image.open(fileIn)
-        imgDest = Image.open(fileOut)
-        imgDiff = ImageChops.difference(imgSource, imgDest)
-        stat = ImageStat.Stat(imgDiff)
-        imgDiffSum = stat.sum
-        logging.info("Sum of absolute pixel differences: {}".format(imgDiffSum))
+        sumPixelDifferences = pixelcheck.sumDifferences(fileIn, fileOut)
+
+        logging.info("Sum of absolute pixel differences: {}".format(sumPixelDifferences))
 
 
 def main():
