@@ -91,7 +91,7 @@ def getFilesFromTree(rootDir, extensions):
                 thisExtension = os.path.splitext(thisFile)[1]
                 thisExtension = thisExtension.upper().strip('.')
                 if extensions[0].strip() == '*' or thisExtension in extensions:
-                    filesList.append(thisFile)
+                    filesList.append(os.path.abspath(thisFile))
     return filesList
 
 
@@ -106,7 +106,6 @@ def processFiles(listFiles, dirIn, dirOut, configDict):
     #grok.compressionProfile = "KB_ACCESS_LOSSY_01/01/2015"
 
     for fileIn in listFiles:
-        logging.info(("file: {}").format(fileIn))
         fileNameIn = os.path.basename(fileIn)
         filePathIn = os.path.dirname(fileIn)
         filePathInRel = os.path.relpath(filePathIn, start=dirIn)
@@ -122,13 +121,25 @@ def processFiles(listFiles, dirIn, dirOut, configDict):
 
         fileOut = os.path.abspath(os.path.join(filePathOut, fileNameOut))
 
+        logging.info("#############################")
+        logging.info("Input image: {}".format(fileIn))
+        logging.info("Output image: {}".format(fileOut))
+
         # Pass I/O to Grok instance and run the conversion
         grok.imageIn = fileIn
         grok.jp2Out = fileOut
         grok.compress()
 
+        logging.info("grk_compress exit status: {}".format(grok.status))
+        if grok.status != 0:
+            logging.error("abnormal grk_compress exit status")
+        if not grok.success:
+            logging.error("grok.compress function resulted in an exception")
+
         # Check on pixel values
-        sumPixelDifferences = pixelcheck.sumDifferences(fileIn, fileOut)
+        sumPixelDifferences, sumSuccess = pixelcheck.sumDifferences(fileIn, fileOut)
+        if not sumSuccess:
+             logging.error("pixel difference check failed")
         logging.info("Sum of absolute pixel differences: {}".format(sumPixelDifferences))
 
         # TODO analyze JP2 with Jpylyzer and evaluate output against Schematron policy

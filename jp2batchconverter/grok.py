@@ -4,7 +4,6 @@
 import os
 import sys
 import subprocess as sub
-import logging
 from . import shared
 
 class Grok:
@@ -20,6 +19,8 @@ class Grok:
         self.compressionProfile = ""
         self.imageIn = ""
         self.jp2Out = ""
+        self.success = True
+        self.status = ""
         self.out = ""
         self.errors = ""
 
@@ -61,6 +62,7 @@ class Grok:
         """
         # TODO include logfile option?
         # TODO add XMP box
+        self.success = True
 
         # Select compression parameters from user-specified profile
         for profile in self.configDict["compressionProfiles"]:
@@ -85,15 +87,9 @@ class Grok:
             status = p.returncode
 
         except Exception:
-            logging.error("running grk_compress resulted in an exception")
+            self.success = False
 
-        logging.info("grk_compress exit status: {}".format(status))
-
-        if status != 0:
-            logging.error("abnormal grk_compress exit status")
-            logging.error("grk_compress stdout: {}".format(out))
-            logging.error("grk_compress stderr: {}".format(errors))
-
+        self.status = status
         self.out = out
         self.errors = errors
 
