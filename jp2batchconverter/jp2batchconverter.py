@@ -50,7 +50,7 @@ def parseCommandLine():
     return args
 
 
-def getConfiguration(configFile):
+def readConfigFile(configFile):
     """read configuration file and return contents as dictionary"""
 
     configDict = {}
@@ -127,10 +127,15 @@ def processFiles(listFiles, dirIn, dirOut, configDict):
         grok.jp2Out = fileOut
         grok.compress()
 
-        # Pixel check
+        # Check on pixel values
         sumPixelDifferences = pixelcheck.sumDifferences(fileIn, fileOut)
-
         logging.info("Sum of absolute pixel differences: {}".format(sumPixelDifferences))
+
+        # TODO analyze JP2 with Jpylyzer and evaluate output against Schematron policy
+
+        # TODO calculate checksum and write to file (in batch root dir?)
+
+        # TODO write outcome of QA checks to summary file (CSV)
 
 
 def main():
@@ -163,7 +168,7 @@ def main():
         shared.errorExit(msg)
 
     # Read config file
-    configDict = getConfiguration(configFile)
+    configDict = readConfigFile(configFile)
 
     # TODO validate contents of config file for completeness
 
@@ -204,7 +209,7 @@ def main():
     start = time.time()
     logging.info("jp2batchconverter started: {}".format(time.asctime()))
 
-    # Process all files
+    # Process all input files
     processFiles(listFiles, dirIn, dirOut, configDict)
 
     # Timing output
