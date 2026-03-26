@@ -19,7 +19,7 @@
         },
         {
          "name":"KB_ACCESS_LOSSY_01/01/2015",
-         "params": ["I",
+         "params": ["-I",
                     "-n","6",
                     "-p","RPCL",
                     "-t","1024,1024",
