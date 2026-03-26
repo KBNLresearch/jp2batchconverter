@@ -17,6 +17,7 @@ class Grok:
         self.grok_lib_dir = ""
         self.grk_compress = ""
         self.configDict = {}
+        self.compressionProfile = ""
         self.imageIn = ""
         self.jp2Out = ""
 
@@ -56,23 +57,16 @@ class Grok:
     def compress(self):
         """Convert input image to JP2
         """
-        # TODO read this from config file
         # TODO include logfile option?
         # TODO add XMP box
 
-        compress_args = ["-n", "6",
-                        "-p", "RPCL",
-                        "-t", "1024,1024",
-                        "-b", "64,64",
-                        "-c", "[256,256],[256,256],[128,128],[128,128],[128,128],[128,128]",
-                        "-r", "2560,1280,640,320,160,80,40,20,10,5,1",
-                        "-S",
-                        "-E",
-                        "-M", "32",
-                        "-C", "KB_MASTER_LOSSLESS_01/01/2015"]
+        # Select compression parameters from user-specified profile
+        for profile in self.configDict["compressionProfiles"]:
+            if profile["name"] == self.compressionProfile:
+                compressionArgs = profile["params"]
 
-        io_args = [self.grk_compress, "-i", self.imageIn, "-o", self.jp2Out]
-        args = io_args + compress_args
+        ioArgs = [self.grk_compress, "-i", self.imageIn, "-o", self.jp2Out]
+        args = ioArgs + compressionArgs
 
         # Command line as string (used for logging purposes only)
         cmdStr = " ".join(args)
@@ -84,7 +78,7 @@ class Grok:
         # Run grk_compress as subprocess
         try:
             p = sub.Popen(args, stdout=sub.PIPE, stderr=sub.PIPE,
-                        shell=False, bufsize=1, universal_newlines=True)
+                          shell=False, bufsize=1, universal_newlines=True)
             out, err = p.communicate()
             status = p.returncode
 

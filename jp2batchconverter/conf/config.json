@@ -1,36 +1,34 @@
 {
-    "kduDir": "~/kakadu",
+    "grokDir":"~/grok",
     "compressionProfiles":
     [
         {
-         "name": "KB_MASTER_LOSSLESS_01/01/2015",
-         "ratios": [2560,1280,640,320,160,80,40,20,10,5,0],
-         "params": ["Creversible=yes",
-                    "Clevels=5",
-                    "Corder=RPCL",
-                    "Stiles={1024,1024}",
-                    "Cblk={64,64}",
-                    "Cprecincts={256,256},{256,256},{128,128}",
-                    "Clayers=11",
-                    "Cuse_sop=yes",
-                    "Cuse_eph=yes",
-                    "Cmodes=SEGMARK",
-                    "-com KB_MASTER_LOSSLESS_01/01/2015"]
+         "name":"KB_MASTER_LOSSLESS_01/01/2015",
+         "params": ["-n","6",
+                    "-p","RPCL",
+                    "-t","1024,1024",
+                    "-b","64,64",
+                    "-c","[256,256],[256,256],[128,128],[128,128],[128,128],[128,128]",
+                    "-r","2560,1280,640,320,160,80,40,20,10,5,1",
+                    "-S",
+                    "-E",
+                    "-M","32",
+                    "-C","KB_MASTER_LOSSLESS_01/01/2015"]
+
         },
         {
-         "name": "KB_ACCESS_LOSSY_01/01/2015",
-         "ratios": [2560,1280,640,320,160,80,40,20],
-         "params": ["Creversible=no",
-                    "Clevels=5",
-                    "Corder=RPCL",
-                    "Stiles={1024,1024}",
-                    "Cblk={64,64}",
-                    "Cprecincts={256,256},{256,256},{128,128}",
-                    "Clayers=8",
-                    "Cuse_sop=yes",
-                    "Cuse_eph=yes",
-                    "Cmodes=SEGMARK",
-                    "-com KB_ACCESS_LOSSY_01/01/2015"]
+         "name":"KB_ACCESS_LOSSY_01/01/2015",
+         "params": ["I",
+                    "-n","6",
+                    "-p","RPCL",
+                    "-t","1024,1024",
+                    "-b","64,64",
+                    "-c","[256,256],[256,256],[128,128],[128,128],[128,128],[128,128]",
+                    "-r","2560,1280,640,320,160,80,40,20",
+                    "-S",
+                    "-E",
+                    "-M","32",
+                    "-C","KB_MASTER_LOSSLESS_01/01/2015"]
         }
     ]
 }

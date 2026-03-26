@@ -101,6 +101,7 @@ def processFiles(listFiles, dirIn, dirOut, configDict):
     grok = Grok()
     grok.configDict = configDict
     grok.configure()
+    grok.compressionProfile = "KB_MASTER_LOSSLESS_01/01/2015"
 
     for fileIn in listFiles:
         logging.info(("file: {}").format(fileIn))
@@ -161,11 +162,6 @@ def main():
     configDict = getConfiguration(configFile)
 
     # TODO validate contents of config file for completeness
-
-    ## TEST
-    for profile in configDict["compressionProfiles"]:
-        print(profile["name"])
-    ## TEST
 
     # Get input from command line
     args = parseCommandLine()
