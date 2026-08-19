@@ -96,7 +96,6 @@ class workflow:
         # Create procesImage class instance
         processImageInstance = processimage.processImage()
         processImageInstance.schema = self.schema
-        processImageInstance.delimiterOut = self.delimiterOut
         processImageInstance.noErrors = self.noErrors
         processImageInstance.noWarnings = self.noWarnings
         processImageInstance.dirIn = self.dirIn

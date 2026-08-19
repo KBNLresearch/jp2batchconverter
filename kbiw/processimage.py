@@ -23,8 +23,6 @@ class processImage:
         """initialise workflow class instance"""
         # Schematron schema used for properties check
         self.schema = None
-        # Delimiter used in summary file and output concordance tables
-        self.delimiterOut = ";"
         # Number of errors encountered during workflow
         self.noErrors = 0
         # Number of warnings encountered during workflow
