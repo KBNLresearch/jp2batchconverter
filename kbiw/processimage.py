@@ -25,10 +25,6 @@ class processImage:
         self.schema = None
         # Delimiter used in summary file and output concordance tables
         self.delimiterOut = ";"
-        # Batch manifest (name only, path is added later)
-        self.batchManifest = "manifest.csv"
-        # Checksum file (name only, path is added later)
-        self.checksumFile = "checksums.sha512"
         # Number of errors encountered during workflow
         self.noErrors = 0
         # Number of warnings encountered during workflow

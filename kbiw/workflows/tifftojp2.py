@@ -97,8 +97,6 @@ class workflow:
         processImageInstance = processimage.processImage()
         processImageInstance.schema = self.schema
         processImageInstance.delimiterOut = self.delimiterOut
-        processImageInstance.batchManifest = self.batchManifest
-        processImageInstance.checksumFile = self.checksumFile
         processImageInstance.noErrors = self.noErrors
         processImageInstance.noWarnings = self.noWarnings
         processImageInstance.dirIn = self.dirIn
