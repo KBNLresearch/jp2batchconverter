@@ -143,17 +143,17 @@ class workflow:
                     thisExtension = os.path.splitext(thisFile)[1]
                     thisExtension = thisExtension.upper().strip('.')
                     if thisExtension in self.extensionsIn:
-                        rowBm, checksum = processImageInstance.processImage(thisFile)
+                        processImageInstance.processImage(thisFile)
                         self.noErrors += processImageInstance.noErrors
                         self.noWarnings += processImageInstance.noWarnings
 
                         # Write row to batch manifest
                         with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
                             writer = csv.writer(fManifest, delimiter=self.delimiterOut)
-                            writer.writerow(rowBm)
+                            writer.writerow(processImageInstance.rowBm)
 
                         # Construct checksum line, following https://superuser.com/a/1566139/681049
-                        checksumLine = "{}  {}\n".format(checksum, rowBm[0])
+                        checksumLine = "{}  {}\n".format(processImageInstance.checksum, processImageInstance.rowBm[0])
 
                         # Write checksum line to file
                         with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fC:

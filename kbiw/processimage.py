@@ -47,8 +47,11 @@ class processImage:
         self.vipsInstance = None
         # Flag that activates automatic conversion of paletted input images to a regular colorspace
         self.convertPalettedImages = False
-        # Grok version string
-        self.grokVersion = None
+        # Output batch manifest row
+        self.rowBm = []
+        # Output checksum
+        self.checksum = ""
+
 
     def configure(self):
         # Start Grok class instance
@@ -59,7 +62,6 @@ class processImage:
         logging.info("grk_compress version: {}".format(
             self.grokInstance.version))
         self.grokInstance.compressionProfile = self.compressionProfile
-        self.grokVersion = self.grokInstance.version
 
         # Start ExifTool instance, using executables as defined in configuration file
         self.etInstance = exiftool.ExifToolHelper(
@@ -77,6 +79,8 @@ class processImage:
         successPixelCheck = False
         successJpylyzerCheck = False
         schTestsFailedStr = ""
+        self.rowBm = []
+        self.checksum = ""
         fileNameIn = os.path.basename(fileIn)
         filePathIn = os.path.dirname(fileIn)
         filePathInRel = os.path.relpath(filePathIn, start=self.dirIn)
@@ -215,10 +219,10 @@ class processImage:
             # File reference, relative to output directory
             fileOutRel = os.path.relpath(fileOut, start=self.dirOut)
             # Calculate checksum (SHA-512)
-            checksum = shared.generate_file_sha512(fileOut)
+            self.checksum = shared.generate_file_sha512(fileOut)
 
             # Batch manifest row
-            rowBm = [fileOutRel,
+            self.rowBm = [fileOutRel,
                 successGrok,
                 successExifTool,
                 pallettedFlag,
@@ -226,4 +230,3 @@ class processImage:
                 successJpylyzerCheck,
                 schTestsFailedStr]
 
-        return rowBm, checksum
