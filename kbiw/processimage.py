@@ -12,33 +12,62 @@ import os
 import shutil
 import csv
 import logging
+import exiftool
 from . import shared
+from . import grok
+from . import vips
 from . import propertiescheck
-from . import ctables
 
 class processImage:
     """image processing class"""
 
     def __init__(self):
         """initialise workflow class instance"""
+        # Compression profile
+        self.compressionProfile = None
         # Schematron schema used for properties check
         self.schema = None
         # Number of errors encountered during workflow
         self.noErrors = 0
         # Number of warnings encountered during workflow
         self.noWarnings = 0
-        # Input batch directory (set in main kbiw.py module)
+        # Input batch directory
         self.dirIn = None
-        # Output batch directory (set in main kbiw.py module)
+        # Output batch directory
         self.dirOut = None
-        # Grok instance (set in processBatch function)
+        # Configuration dictionary
+        self.configDict = None
+        # Compression profiles dictionary
+        self.cprofilesDict = None
+        # Grok instance
         self.grokInstance = None
-        # ExifTool instance (set in processBatch function)
+        # ExifTool instance
         self.etInstance = None
-        # Vips instance (set in processBatch function)
+        # Vips instance
         self.vipsInstance = None
         # Flag that activates automatic conversion of paletted input images to a regular colorspace
         self.convertPalettedImages = False
+        # Grok version string
+        self.grokVersion = None
+
+    def configure(self):
+        # Start Grok class instance
+        self.grokInstance = grok.Grok()
+        self.grokInstance.configDict = self.configDict
+        self.grokInstance.cprofilesDict = self.cprofilesDict
+        self.grokInstance.configure()
+        logging.info("grk_compress version: {}".format(
+            self.grokInstance.version))
+        self.grokInstance.compressionProfile = self.compressionProfile
+        self.grokVersion = self.grokInstance.version
+
+        # Start ExifTool instance, using executables as defined in configuration file
+        self.etInstance = exiftool.ExifToolHelper(
+            executable=self.configDict["exifToolExecutable"])
+
+        # Start Vips instance
+        self.vipsInstance = vips.Vips(self.configDict["vipsBinDir"])
+
 
     def processImage(self, fileIn):
         """Process one image"""

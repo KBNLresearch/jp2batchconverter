@@ -8,11 +8,8 @@ import os
 import shutil
 import csv
 import logging
-import exiftool
 from .. import processimage
 from .. import shared
-from .. import grok
-from .. import vips
 from .. import propertiescheck
 from .. import ctables
 
@@ -77,24 +74,11 @@ class workflow:
         # Add path to Schematron schema for properties check
         self.schema = os.path.join(self.configPath, "schemas", self.schema)
 
-        # Start Grok class instance
-        self.grokInstance = grok.Grok()
-        self.grokInstance.configDict = self.configDict
-        self.grokInstance.cprofilesDict = self.cprofilesDict
-        self.grokInstance.configure()
-        logging.info("grk_compress version: {}".format(
-            self.grokInstance.version))
-        self.grokInstance.compressionProfile = self.compressionProfile
-
-        # Start ExifTool instance, using executables as defined in configuration file
-        self.etInstance = exiftool.ExifToolHelper(
-            executable=self.configDict["exifToolExecutable"])
-
-        # Start Vips instance
-        self.vipsInstance = vips.Vips(self.configDict["vipsBinDir"])
-
         # Create procesImage class instance
         processImageInstance = processimage.processImage()
+        processImageInstance.configDict = self.configDict
+        processImageInstance.cprofilesDict = self.cprofilesDict
+        processImageInstance.compressionProfile = self.compressionProfile
         processImageInstance.schema = self.schema
         processImageInstance.noErrors = self.noErrors
         processImageInstance.noWarnings = self.noWarnings
@@ -104,6 +88,7 @@ class workflow:
         processImageInstance.etInstance = self.etInstance
         processImageInstance.vipsInstance = self.vipsInstance
         processImageInstance.convertPalettedImages = self.convertPalettedImages
+        processImageInstance.configure()
 
         # Add paths to batch manifest, checksum and summary files
         self.batchManifest = os.path.join(self.dirOut, self.batchManifest)
@@ -193,7 +178,7 @@ class workflow:
 
         # Write summary file
         with open(self.summaryFile, 'w', newline='', encoding='utf-8') as fSum:
-            fSum.write("Grok version: {}\n".format(self.grokInstance.version))
+            fSum.write("Grok version: {}\n".format(processImageInstance.grokInstance.version))
             fSum.write("Errors: {}\n".format(self.noErrors))
             fSum.write("Warnings: {}\n".format(self.noWarnings))
             fSum.write(
