@@ -162,9 +162,21 @@ class workflow:
                     thisExtension = os.path.splitext(thisFile)[1]
                     thisExtension = thisExtension.upper().strip('.')
                     if thisExtension in self.extensionsIn:
-                        processImageInstance.processImage(thisFile)
+                        rowBm, checksum = processImageInstance.processImage(thisFile)
                         self.noErrors += processImageInstance.noErrors
                         self.noWarnings += processImageInstance.noWarnings
+
+                        # Write row to batch manifest
+                        with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
+                            writer = csv.writer(fManifest, delimiter=self.delimiterOut)
+                            writer.writerow(rowBm)
+
+                        # Construct checksum line, following https://superuser.com/a/1566139/681049
+                        checksumLine = "{}  {}\n".format(checksum, rowBm[0])
+
+                        # Write checksum line to file
+                        with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fC:
+                            fC.write(checksumLine)
 
         if self.processCTables:
             # Cross check entries in concordance tables with batch manifest

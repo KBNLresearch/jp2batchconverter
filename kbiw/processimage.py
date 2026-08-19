@@ -189,27 +189,18 @@ class processImage:
                 ssDiff = None
                 self.noErrors += 1
 
+            # File reference, relative to output directory
+            fileOutRel = os.path.relpath(fileOut, start=self.dirOut)
             # Calculate checksum (SHA-512)
             checksum = shared.generate_file_sha512(fileOut)
 
-            # File reference, relative to output directory
-            fileOutRel = os.path.relpath(fileOut, start=self.dirOut)
-
-            # Construct checksum line, following https://superuser.com/a/1566139/681049
-            checksumLine = "{}  {}\n".format(checksum, fileOutRel)
-
-            # Write checksum line to file
-            with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fC:
-                fC.write(checksumLine)
-
-        # Write outcomes of QA checks to batch manifest
-        with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
-            writer = csv.writer(fManifest, delimiter=self.delimiterOut)
-            row = [fileOutRel,
+            # Batch manifest row
+            rowBm = [fileOutRel,
                 successGrok,
                 successExifTool,
                 pallettedFlag,
                 successPixelCheck,
                 successJpylyzerCheck,
                 schTestsFailedStr]
-            writer.writerow(row)
+
+        return rowBm, checksum
