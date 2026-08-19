@@ -163,6 +163,8 @@ class workflow:
                     thisExtension = thisExtension.upper().strip('.')
                     if thisExtension in self.extensionsIn:
                         processImageInstance.processImage(thisFile)
+                        self.noErrors += processImageInstance.noErrors
+                        self.noWarnings += processImageInstance.noWarnings
 
         if self.processCTables:
             # Cross check entries in concordance tables with batch manifest
