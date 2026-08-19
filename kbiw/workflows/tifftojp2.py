@@ -10,7 +10,6 @@ import csv
 import logging
 from .. import processimage
 from .. import shared
-from .. import propertiescheck
 from .. import ctables
 
 
