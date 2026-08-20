@@ -4,7 +4,6 @@
 TIFF to JP2 workflow for KB Middeleeuwse Handschriften batches
 """
 
-import sys
 import os
 import shutil
 import csv
@@ -163,9 +162,6 @@ class Workflow:
                                                 self.extensionsIn,
                                                 self.batchManifest)
                     myCTables.update()
-
-            ## TEST
-            #sys.exit()
 
             for filename in filenames:
                 self.processFile(filename, dirname)
