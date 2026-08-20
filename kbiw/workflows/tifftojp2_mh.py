@@ -134,6 +134,14 @@ class Workflow:
             writer = csv.writer(fManifest, delimiter=self.delimiterOut)
             writer.writerow(manifestHeadings)
 
+        # Write header to checksum file
+        checksumHeadings = ["File",
+                            "SHA512"]
+
+        with open(self.checksumFile, 'w', newline='', encoding='utf-8') as fChecksum:
+            writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
+            writer.writerow(checksumHeadings)
+
         # Iterate over directories and files in batch
         for dirname, dirnames, filenames in os.walk(self.dirIn):
             for subdirname in dirnames:
@@ -172,12 +180,10 @@ class Workflow:
                             writer = csv.writer(fManifest, delimiter=self.delimiterOut)
                             writer.writerow(tifftoJP2Instance.rowBm)
 
-                        # Construct checksum line, following https://superuser.com/a/1566139/681049
-                        checksumLine = "{}  {}\n".format(tifftoJP2Instance.checksum, tifftoJP2Instance.rowBm[0])
-
-                        # Write checksum line to file
-                        with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fC:
-                            fC.write(checksumLine)
+                        # Write row to checksum file
+                        with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fChecksum:
+                            writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
+                            writer.writerow([tifftoJP2Instance.rowBm[0], tifftoJP2Instance.checksum])
 
         if self.processCTables:
             # Cross check entries in concordance tables with batch manifest
