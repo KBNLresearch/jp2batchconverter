@@ -229,6 +229,7 @@ class Workflow:
                 dirPathIn, dirPathOut))
             self.noErrors += 1
 
+
     def copyAccessDir(self, dirIn):
         """Copy dir with access image to output batch and verify checksums"""
 
@@ -243,3 +244,22 @@ class Workflow:
             logging.error("copying data from directory {} to {} resulted in an exception".format(
                 dirPathIn, dirPathOut))
             self.noErrors += 1
+
+        # Iterate over files
+        for dirname, dirnames, filenames in os.walk(dirPathOut):
+            for filename in filenames:
+                if filename.startswith("._"):
+                    # Ignore AppleDouble resource fork files (identified here by name)
+                    pass
+                else:
+                    thisFile = os.path.join(dirname, filename)
+                    # File reference, relative to output directory
+                    thisFileRel = os.path.relpath(thisFile, start=self.dirOut)
+                    # Calculate checksum (SHA-512)
+                    checksum = shared.generate_file_sha512(thisFile)
+
+                    # Write row to checksum file
+                    with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fChecksum:
+                        writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
+                        writer.writerow([thisFileRel, checksum])
+
