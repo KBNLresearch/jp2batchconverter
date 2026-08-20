@@ -18,8 +18,8 @@ from . import grok
 from . import vips
 from . import propertiescheck
 
-class processImage:
-    """image processing class"""
+class tifftojp2:
+    """TIFF to JP2 conversion and quality checks"""
 
     def __init__(self):
         """initialise workflow class instance"""
@@ -71,7 +71,7 @@ class processImage:
         self.vipsInstance = vips.Vips(self.configDict["vipsBinDir"])
 
 
-    def processImage(self, fileIn):
+    def convertImage(self, fileIn):
         """Process one image"""
         convertFromUnpaletted = False
         successGrok = False

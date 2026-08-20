@@ -8,7 +8,7 @@ import os
 import shutil
 import csv
 import logging
-from .. import processimage
+from .. import tifftojp2
 from .. import shared
 from .. import ctables
 
@@ -73,21 +73,21 @@ class workflow:
         # Add path to Schematron schema for properties check
         self.schema = os.path.join(self.configPath, "schemas", self.schema)
 
-        # Create procesImage class instance
-        processImageInstance = processimage.processImage()
-        processImageInstance.configDict = self.configDict
-        processImageInstance.cprofilesDict = self.cprofilesDict
-        processImageInstance.compressionProfile = self.compressionProfile
-        processImageInstance.schema = self.schema
-        processImageInstance.noErrors = self.noErrors
-        processImageInstance.noWarnings = self.noWarnings
-        processImageInstance.dirIn = self.dirIn
-        processImageInstance.dirOut = self.dirOut
-        processImageInstance.grokInstance = self.grokInstance
-        processImageInstance.etInstance = self.etInstance
-        processImageInstance.vipsInstance = self.vipsInstance
-        processImageInstance.convertPalettedImages = self.convertPalettedImages
-        processImageInstance.configure()
+        # Create tifftojp2 class instance
+        tifftoJP2Instance = tifftojp2.tifftojp2()
+        tifftoJP2Instance.configDict = self.configDict
+        tifftoJP2Instance.cprofilesDict = self.cprofilesDict
+        tifftoJP2Instance.compressionProfile = self.compressionProfile
+        tifftoJP2Instance.schema = self.schema
+        tifftoJP2Instance.noErrors = self.noErrors
+        tifftoJP2Instance.noWarnings = self.noWarnings
+        tifftoJP2Instance.dirIn = self.dirIn
+        tifftoJP2Instance.dirOut = self.dirOut
+        tifftoJP2Instance.grokInstance = self.grokInstance
+        tifftoJP2Instance.etInstance = self.etInstance
+        tifftoJP2Instance.vipsInstance = self.vipsInstance
+        tifftoJP2Instance.convertPalettedImages = self.convertPalettedImages
+        tifftoJP2Instance.configure()
 
         # Add paths to batch manifest, checksum and summary files
         self.batchManifest = os.path.join(self.dirOut, self.batchManifest)
@@ -143,17 +143,18 @@ class workflow:
                     thisExtension = os.path.splitext(thisFile)[1]
                     thisExtension = thisExtension.upper().strip('.')
                     if thisExtension in self.extensionsIn:
-                        processImageInstance.processImage(thisFile)
-                        self.noErrors += processImageInstance.noErrors
-                        self.noWarnings += processImageInstance.noWarnings
+                        # Convert image and perform quality checks
+                        tifftoJP2Instance.convertImage(thisFile)
+                        self.noErrors += tifftoJP2Instance.noErrors
+                        self.noWarnings += tifftoJP2Instance.noWarnings
 
                         # Write row to batch manifest
                         with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
                             writer = csv.writer(fManifest, delimiter=self.delimiterOut)
-                            writer.writerow(processImageInstance.rowBm)
+                            writer.writerow(tifftoJP2Instance.rowBm)
 
                         # Construct checksum line, following https://superuser.com/a/1566139/681049
-                        checksumLine = "{}  {}\n".format(processImageInstance.checksum, processImageInstance.rowBm[0])
+                        checksumLine = "{}  {}\n".format(tifftoJP2Instance.checksum, tifftoJP2Instance.rowBm[0])
 
                         # Write checksum line to file
                         with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fC:
@@ -177,7 +178,7 @@ class workflow:
 
         # Write summary file
         with open(self.summaryFile, 'w', newline='', encoding='utf-8') as fSum:
-            fSum.write("Grok version: {}\n".format(processImageInstance.grokInstance.version))
+            fSum.write("Grok version: {}\n".format(tifftoJP2Instance.grokInstance.version))
             fSum.write("Errors: {}\n".format(self.noErrors))
             fSum.write("Warnings: {}\n".format(self.noWarnings))
             fSum.write(
