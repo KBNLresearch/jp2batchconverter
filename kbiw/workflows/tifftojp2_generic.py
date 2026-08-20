@@ -13,7 +13,7 @@ from .. import shared
 from .. import ctables
 
 
-class workflow:
+class Workflow:
     """workflow class"""
 
     def __init__(self):
@@ -73,8 +73,8 @@ class workflow:
         # Add path to Schematron schema for properties check
         self.schema = os.path.join(self.configPath, "schemas", self.schema)
 
-        # Create tifftojp2 class instance
-        tifftoJP2Instance = tifftojp2.tifftojp2()
+        # Create TiffToJP2 class instance
+        tifftoJP2Instance = tifftojp2.TiffToJP2()
         tifftoJP2Instance.configDict = self.configDict
         tifftoJP2Instance.cprofilesDict = self.cprofilesDict
         tifftoJP2Instance.compressionProfile = self.compressionProfile

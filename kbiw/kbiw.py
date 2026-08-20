@@ -204,7 +204,7 @@ def main():
     # Run selected workflow
     if workflow == "tifftojp2-mh":
         # Middeleeuwse Handschriften
-        wf = tifftojp2_generic.workflow()
+        wf = tifftojp2_generic.Workflow()
         # Compression profile
         wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check
@@ -218,7 +218,7 @@ def main():
         wf.cTableDirName = "Concordantie"
     elif workflow == "tifftojp2-ie":
         # Indisch Erfgoed
-        wf = tifftojp2_generic.workflow()
+        wf = tifftojp2_generic.Workflow()
         # Compression profile
         wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check
@@ -232,7 +232,7 @@ def main():
         wf.processCTables = False
     elif workflow == "tifftojp2-generic":
         # Generic workflow - input batch only contains TIFF images
-        wf = tifftojp2_generic.workflow()
+        wf = tifftojp2_generic.Workflow()
         # Compression profile
         wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check
@@ -243,7 +243,7 @@ def main():
         # Generic workflow - input batch only contains TIFF images
         # Convert any paletted TIFFs to (temporary) "normal" TIFF
         # before converting to JP2, to prevent paletted JP2s
-        wf = tifftojp2_generic.workflow()
+        wf = tifftojp2_generic.Workflow()
         # Compression profile
         wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check

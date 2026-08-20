@@ -18,7 +18,7 @@ from . import grok
 from . import vips
 from . import propertiescheck
 
-class tifftojp2:
+class TiffToJP2:
     """TIFF to JP2 conversion and quality checks"""
 
     def __init__(self):
