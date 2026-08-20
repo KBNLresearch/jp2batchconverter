@@ -235,6 +235,16 @@ This is a semicolon-delimited file with information about each converted image. 
 |successJpylyzerCheck|True/False flag that indicates if the check on the image properties (Jpylyzer + Schematron) was successful|
 |failedJpylyzerChecks|List of failed Jpylyzer + Schematron checks (separated by "\|" characters)|
 
+For the MH (Middeleeuwse Handschriften) workflow, two additional columns are reported:
+
+|Column|Meaning|
+|:--|:--|
+|succesFileMatch|True/False flag that indicates if a file that was copied from the source batch could be matched against an entry in the corresponding checksum file|
+|succesChecksumCheck|True/False flag that indicates if the checksum for a file that was copied from the source batch was successful|
+
+These are *only* reported for (access) files that were copied from the source batch. For these files, all other fields have the value "na". Conversely, for converted images these fields always have the value "na".
+
+
 #### kbiw.log
 
 Log file. If the summary file indicates any errors or warnings, the log file provides detailed information on them (look for the ERROR and WARNING messages).
