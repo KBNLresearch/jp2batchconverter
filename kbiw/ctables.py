@@ -53,25 +53,65 @@ class CTables:
         rowIndex = 0
         logging.info(
             "updating concordance table {} to {}".format(fileIn, fileOut))
+
+        # First part of concordance table name refers to corresponding directory in "Signaturen"
+        sigDir = os.path.basename(fileIn).split("_")[0]
+        masterDirPath = os.path.join("Signaturen", sigDir, "Master")
+        accessDirPath = os.path.join("Signaturen", sigDir, "Access_Renamed")
+
         with open(fileIn, 'r', newline='', encoding='utf-8') as fIn:
             reader = csv.reader(fIn, delimiter=self.delimiterIn)
-            for row in reader:
-                if rowIndex == 0:
-                    # Header line
-                    listOut.append(row)
-                    rowIndex += 1
-                else:
-                    rowOut = []
-                    for fNameIn in row:
-                        pre, ext = os.path.splitext(fNameIn)
-                        ext = ext.strip(".").upper()
-                        if ext in self.extensionsIn:
-                            fNameOut = "{}.{}".format(pre, "jp2")
-                        else:
-                            fNameOut = fNameIn
-                        rowOut.append(fNameOut)
-                    rowIndex += 1
-                    listOut.append(rowOut)
+            cTabIn = list(reader)
+
+        for row in cTabIn:
+            if rowIndex == 0:
+                # Header line
+                listOut.append(row)
+                rowIndex += 1
+            else:
+                rowOut = []
+                colIndex = 0
+                for fNameIn in row:
+                    # Header value
+                    headerValue = (cTabIn[0][colIndex])
+                    # File prefix and extension
+                    pre, ext = os.path.splitext(fNameIn)
+                    ext = ext.strip(".").upper()
+
+                    # Update file extension if needed
+                    if ext in self.extensionsIn:
+                        fNameOut = "{}.{}".format(pre, "jp2")
+                    else:
+                        fNameOut = fNameIn
+
+                    # Add path
+                    if headerValue == "Master":
+                        fOut = os.path.join(masterDirPath, fNameOut)
+
+                    if headerValue == "Access_Renamed":
+                        fOut = os.path.join(accessDirPath, fNameOut)
+
+                    if headerValue.startswith("Targets"):
+                        # Target location follows from file base name
+                        try:
+                            nameComponents = pre.split("_")
+                        except IndexError:
+                            nameComponents = []
+                        try:
+                            targetDir = "{}_{}_{}".format(
+                                nameComponents[0], nameComponents[2], nameComponents[3])
+                        except IndexError:
+                            targetDir = ""
+                            logging.error("couldn't construct directory path for target {fNameOut}".format())
+                        fOut = os.path.join("Targets", targetDir, fNameOut)
+
+                    rowOut.append(fOut)
+
+                    colIndex +=1
+
+                rowIndex += 1
+
+                listOut.append(rowOut)
 
         try:
             with open(fileOut, 'w', newline='', encoding='utf-8') as fOut:
