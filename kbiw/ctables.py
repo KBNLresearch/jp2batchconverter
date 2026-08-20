@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
-"""Module for manipulating and checking of concordance tables"""
+"""Module for manipulating and checking of concordance tables
+in Middeleeuwse Handschriften batches"""
 
 import os
 import csv
