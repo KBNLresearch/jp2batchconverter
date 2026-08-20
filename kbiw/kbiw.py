@@ -18,6 +18,7 @@ import json
 import logging
 from . import shared
 from .workflows import tifftojp2_generic
+from .workflows import tifftojp2_mh
 
 __version__ = "0.1.2"
 
@@ -204,18 +205,7 @@ def main():
     # Run selected workflow
     if workflow == "tifftojp2-mh":
         # Middeleeuwse Handschriften
-        wf = tifftojp2_generic.Workflow()
-        # Compression profile
-        wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
-        # Schematron schema used for properties check
-        wf.schema = "kbMaster_2026.sch"
-        # List with names of directories that must be copied unchanged
-        wf.copyDirs = ["Pakbon",
-                       "Access_Renamed"]
-        # Activate processing of concordance table
-        wf.processCTables = True
-        # Name of concordance table dir
-        wf.cTableDirName = "Concordantie"
+        wf = tifftojp2_mh.Workflow()
     elif workflow == "tifftojp2-ie":
         # Indisch Erfgoed
         wf = tifftojp2_generic.Workflow()
@@ -261,9 +251,11 @@ def main():
     if not profileExists:
         msg = "compression profile ({}) is undefined".format(wf.compressionProfile)
         shared.errorExit(msg)
+
     # Check if schema exists
-    if not os.path.isfile(os.path.join(configPath, "schemas", wf.schema)):
-        msg = "schema ({}) does not exist".format(wf.schema)
+    schema = os.path.join(configPath, "schemas", wf.schema)
+    if not os.path.isfile(schema):
+        msg = "schema ({}) does not exist".format(schema)
         shared.errorExit(msg)
 
     wf.dirIn = dirIn

@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 """
-Generic TIFF to JP2 workflow
+TIFF to JP2 workflow for KB Middeleeuwse Handschriften batches
 """
 
 import os
@@ -21,9 +21,9 @@ class Workflow:
         # List of input extensions that will be converted to JP2
         self.extensionsIn = ["tif", "tiff"]
         # Compression profile (name only, path is added later)
-        self.compressionProfile = None
+        self.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check
-        self.schema = None
+        self.schema = "kbMaster_2026.sch"
         # Delimiter used in input concordance tables
         self.delimiterIn = ";"
         # Delimiter used in summary file and output concordance tables
@@ -55,13 +55,14 @@ class Workflow:
         # Vips instance (set in processBatch function)
         self.vipsInstance = None
         # Flag that activates processing of concordance tables
-        self.processCTables = False
+        self.processCTables = True
         # Name of directory that contains concordance tables
-        self.cTableDirName = None
+        self.cTableDirName = "Concordantie"
         # Flag that activates automatic conversion of paletted input images to a regular colorspace
         self.convertPalettedImages = False
         # List of directory names that will copied unchanged from input to output batch
-        self.copyDirs = []
+        self.copyDirs = ["Pakbon",
+                       "Access_Renamed"]
 
     def processBatch(self):
         """Process a batch"""
