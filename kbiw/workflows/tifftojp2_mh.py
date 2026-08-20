@@ -90,27 +90,36 @@ class Workflow:
         tifftoJP2Instance.convertPalettedImages = self.convertPalettedImages
         tifftoJP2Instance.configure()
 
+        # Create "Checksums" directory
+        dirChecksums = os.path.join(self.dirOut, "Checksums")
+        if not os.path.isdir(dirChecksums):
+            try:
+                os.makedirs(dirChecksums)
+            except exception:
+                msg = "creation of Checksums directory {} failed".format(dirChecksums)
+                shared.errorExit(msg)
+
         # Create "Pakbon" directory
         dirPakbon = os.path.join(self.dirOut, "Pakbon")
-        if not os.path.isdir(dirPakbon ):
+        if not os.path.isdir(dirPakbon):
             try:
-                os.makedirs(dirPakbon )
+                os.makedirs(dirPakbon)
             except exception:
                 msg = "creation of Pakbon directory {} failed".format(dirPakbon)
                 shared.errorExit(msg)
 
-        # Add paths to batch manifest, checksum and summary files
+        # Add paths to batch manifest, summary and checksum files
         self.batchManifest = os.path.join(dirPakbon, self.batchManifest)
-        self.checksumFile = os.path.join(dirPakbon, self.checksumFile)
         self.summaryFile = os.path.join(dirPakbon, self.summaryFile)
+        self.checksumFile = os.path.join(dirChecksums, self.checksumFile)
 
         # Remove any previous batch manifest / checksum / summary file instances
         if os.path.isfile(self.batchManifest):
             os.remove(self.batchManifest)
-        if os.path.isfile(self.checksumFile):
-            os.remove(self.checksumFile)
         if os.path.isfile(self.summaryFile):
             os.remove(self.summaryFile)
+        if os.path.isfile(self.checksumFile):
+            os.remove(self.checksumFile)
 
         # Write header to batch manifest
         manifestHeadings = ["image",
