@@ -104,7 +104,7 @@ class CTables:
                 imagesManifest.append(row[0])
             rowIndex += 1
 
-        # Stop here if concordance dir doesn't exist'
+        # Stop here if concordance dir doesn't exist
         if not os.path.isdir(self.dirConcordanceOut):
             logging.error("concordance directory {} does not exist".format(
                 self.dirConcordanceOut))

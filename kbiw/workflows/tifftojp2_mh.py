@@ -85,12 +85,12 @@ class Workflow:
         self.tifftoJP2Instance.configure()
 
         # Create "Checksums" directory
-        dirChecksums = os.path.join(self.dirOut, "Checksums")
-        if not os.path.isdir(dirChecksums):
+        self.dirChecksums = os.path.join(self.dirOut, "Checksums")
+        if not os.path.isdir(self.dirChecksums):
             try:
-                os.makedirs(dirChecksums)
+                os.makedirs(self.dirChecksums)
             except exception:
-                msg = "creation of Checksums directory {} failed".format(dirChecksums)
+                msg = "creation of Checksums directory {} failed".format(self.dirChecksums)
                 shared.errorExit(msg)
 
         # Create "Pakbon" directory
@@ -105,7 +105,7 @@ class Workflow:
         # Add paths to batch manifest, summary and checksum files
         self.batchManifest = os.path.join(dirPakbon, self.batchManifest)
         self.summaryFile = os.path.join(dirPakbon, self.summaryFile)
-        self.checksumFile = os.path.join(dirChecksums, self.checksumFile)
+        self.checksumFile = os.path.join(self.dirChecksums, self.checksumFile)
 
         # Remove any previous batch manifest / checksum / summary file instances
         if os.path.isfile(self.batchManifest):
@@ -122,7 +122,9 @@ class Workflow:
                             "palettedImage",
                             "successPixelCheck",
                             "successJpylyzerCheck",
-                            "failedJpylyzerChecks"]
+                            "failedJpylyzerChecks",
+                            "succesFileMatch",
+                            "succesChecksumCheck"]
 
         with open(self.batchManifest, 'w', newline='', encoding='utf-8') as fManifest:
             writer = csv.writer(fManifest, delimiter=self.delimiterOut)
@@ -206,7 +208,10 @@ class Workflow:
                 # Write row to batch manifest
                 with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
                     writer = csv.writer(fManifest, delimiter=self.delimiterOut)
-                    writer.writerow(self.tifftoJP2Instance.rowBm)
+                    # add two empy columns to fit access fields
+                    rowBm = self.tifftoJP2Instance.rowBm
+                    rowBm.extend(["na","na"])
+                    writer.writerow(rowBm)
 
                 # Write row to checksum file
                 with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fChecksum:
@@ -232,6 +237,23 @@ class Workflow:
 
     def copyAccessDir(self, dirIn):
         """Copy dir with access image to output batch and verify checksums"""
+
+        foundInputChecksumFile = False
+
+        # Find input access checksums file based on naming pattern
+        dirChecksumsIn = os.path.join(self.dirIn, "Checksums")
+        for file in os.listdir(dirChecksumsIn):
+            if file.endswith("Signaturen_access_renamed_checksum_sha512.csv"):
+                fileAccessChecksums = os.path.join(dirChecksumsIn, file)
+                foundInputChecksumFile = True
+
+        if foundInputChecksumFile:
+            with open(fileAccessChecksums, newline='') as fCA:
+                reader = csv.reader(fCA, delimiter=",")
+                accessChecksums = list(reader)
+        else:
+            logging.error("missing checksum file for access images in input batch")
+            self.noErrors += 1
 
         dirPathInRel = os.path.relpath(dirIn, start=self.dirIn)
         dirPathIn = os.path.abspath(os.path.join(self.dirIn, dirPathInRel))
@@ -262,4 +284,28 @@ class Workflow:
                     with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fChecksum:
                         writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
                         writer.writerow([thisFileRel, checksum])
+
+                    fileMatch = False
+                    checksumMatch = False
+
+                    if foundInputChecksumFile:
+                        # Verify checksum against checksum in input batch
+                        for row in accessChecksums:
+                            if row[0] == thisFileRel:
+                                fileMatch = True
+                                if checksum == row[1]:
+                                    checksumMatch = True
+
+                    if not fileMatch:
+                        logging.error("no matching record in checksum file for {}".format(thisFileRel))
+                        self.noErrors += 1
+                    if not checksumMatch:
+                        logging.error("checksum check unsuccessful for {}".format(thisFileRel))
+                        self.noErrors += 1
+
+                    # Write row to batch manifest
+                    with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
+                        writer = csv.writer(fManifest, delimiter=self.delimiterOut)
+                        rowBm = [thisFileRel, "na", "na", "na", "na", "na", "na", fileMatch, checksumMatch]
+                        writer.writerow(rowBm)
 
