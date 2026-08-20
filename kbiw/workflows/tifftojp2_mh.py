@@ -56,9 +56,7 @@ class Workflow:
         self.vipsInstance = None
         # Flag that activates automatic conversion of paletted input images to a regular colorspace
         self.convertPalettedImages = False
-        # List of directory names that will copied unchanged from input to output batch
-        self.copyDirs = ["Pakbon",
-                       "Access_Renamed"]
+
 
     def processBatch(self):
         """Process a batch"""
@@ -71,20 +69,20 @@ class Workflow:
         self.schema = os.path.join(self.configPath, "schemas", self.schema)
 
         # Create TiffToJP2 class instance
-        tifftoJP2Instance = tifftojp2.TiffToJP2()
-        tifftoJP2Instance.configDict = self.configDict
-        tifftoJP2Instance.cprofilesDict = self.cprofilesDict
-        tifftoJP2Instance.compressionProfile = self.compressionProfile
-        tifftoJP2Instance.schema = self.schema
-        tifftoJP2Instance.noErrors = self.noErrors
-        tifftoJP2Instance.noWarnings = self.noWarnings
-        tifftoJP2Instance.dirIn = self.dirIn
-        tifftoJP2Instance.dirOut = self.dirOut
-        tifftoJP2Instance.grokInstance = self.grokInstance
-        tifftoJP2Instance.etInstance = self.etInstance
-        tifftoJP2Instance.vipsInstance = self.vipsInstance
-        tifftoJP2Instance.convertPalettedImages = self.convertPalettedImages
-        tifftoJP2Instance.configure()
+        self.tifftoJP2Instance = tifftojp2.TiffToJP2()
+        self.tifftoJP2Instance.configDict = self.configDict
+        self.tifftoJP2Instance.cprofilesDict = self.cprofilesDict
+        self.tifftoJP2Instance.compressionProfile = self.compressionProfile
+        self.tifftoJP2Instance.schema = self.schema
+        self.tifftoJP2Instance.noErrors = self.noErrors
+        self.tifftoJP2Instance.noWarnings = self.noWarnings
+        self.tifftoJP2Instance.dirIn = self.dirIn
+        self.tifftoJP2Instance.dirOut = self.dirOut
+        self.tifftoJP2Instance.grokInstance = self.grokInstance
+        self.tifftoJP2Instance.etInstance = self.etInstance
+        self.tifftoJP2Instance.vipsInstance = self.vipsInstance
+        self.tifftoJP2Instance.convertPalettedImages = self.convertPalettedImages
+        self.tifftoJP2Instance.configure()
 
         # Create "Checksums" directory
         dirChecksums = os.path.join(self.dirOut, "Checksums")
@@ -142,9 +140,15 @@ class Workflow:
         for dirname, dirnames, filenames in os.walk(self.dirIn):
             for subdirname in dirnames:
                 thisDirectory = os.path.join(dirname, subdirname)
-                if subdirname in self.copyDirs:
-                    # Files in copyDirs directories are copied without modification
-                    self.copyDir(thisDirectory)
+
+                if subdirname == "Access_Renamed":
+                    # Access JPEGs are copied without modification
+                    # Checksums are verified against checksum file in source batch
+                    self.copyAccessDir(thisDirectory)
+
+                if subdirname == "Pakbon":
+                    # Files in Pakbon directory - TODO
+                    pass
 
                 if subdirname == "Concordantie":
                     # Update concordance tables
@@ -158,28 +162,7 @@ class Workflow:
                     myCTables.update()
 
             for filename in filenames:
-                if filename.startswith("._"):
-                    # Ignore AppleDouble resource fork files (identified here by name)
-                    pass
-                else:
-                    thisFile = os.path.join(dirname, filename)
-                    thisExtension = os.path.splitext(thisFile)[1]
-                    thisExtension = thisExtension.upper().strip('.')
-                    if thisExtension in self.extensionsIn:
-                        # Convert image and perform quality checks
-                        tifftoJP2Instance.convertImage(thisFile)
-                        self.noErrors += tifftoJP2Instance.noErrors
-                        self.noWarnings += tifftoJP2Instance.noWarnings
-
-                        # Write row to batch manifest
-                        with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
-                            writer = csv.writer(fManifest, delimiter=self.delimiterOut)
-                            writer.writerow(tifftoJP2Instance.rowBm)
-
-                        # Write row to checksum file
-                        with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fChecksum:
-                            writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
-                            writer.writerow([tifftoJP2Instance.rowBm[0], tifftoJP2Instance.checksum])
+                self.processFile(filename, dirname)
 
         # Cross check entries in concordance tables with batch manifest
         try:
@@ -198,14 +181,56 @@ class Workflow:
 
         # Write summary file
         with open(self.summaryFile, 'w', newline='', encoding='utf-8') as fSum:
-            fSum.write("Grok version: {}\n".format(tifftoJP2Instance.grokInstance.version))
+            fSum.write("Grok version: {}\n".format(self.tifftoJP2Instance.grokInstance.version))
             fSum.write("Errors: {}\n".format(self.noErrors))
             fSum.write("Warnings: {}\n".format(self.noWarnings))
             fSum.write(
                 "See batch manifest and log file for details on errors and warnings\n")
 
+
+    def processFile(self, filename, dirname):
+        """Process one file """
+        if filename.startswith("._"):
+            # Ignore AppleDouble resource fork files (identified here by name)
+            pass
+        else:
+            thisFile = os.path.join(dirname, filename)
+            thisExtension = os.path.splitext(thisFile)[1]
+            thisExtension = thisExtension.upper().strip('.')
+            if thisExtension in self.extensionsIn:
+                # Convert image and perform quality checks
+                self.tifftoJP2Instance.convertImage(thisFile)
+                self.noErrors += self.tifftoJP2Instance.noErrors
+                self.noWarnings += self.tifftoJP2Instance.noWarnings
+
+                # Write row to batch manifest
+                with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
+                    writer = csv.writer(fManifest, delimiter=self.delimiterOut)
+                    writer.writerow(self.tifftoJP2Instance.rowBm)
+
+                # Write row to checksum file
+                with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fChecksum:
+                    writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
+                    writer.writerow([self.tifftoJP2Instance.rowBm[0], self.tifftoJP2Instance.checksum])
+
+
     def copyDir(self, dirIn):
         """Copy input dir to same relative location in output batch"""
+
+        dirPathInRel = os.path.relpath(dirIn, start=self.dirIn)
+        dirPathIn = os.path.abspath(os.path.join(self.dirIn, dirPathInRel))
+        dirPathOut = os.path.abspath(os.path.join(self.dirOut, dirPathInRel))
+        logging.info("copying directory {} to {}".format(
+            dirPathIn, dirPathOut))
+        try:
+            shutil.copytree(dirPathIn, dirPathOut, dirs_exist_ok=True)
+        except Exception:
+            logging.error("copying data from directory {} to {} resulted in an exception".format(
+                dirPathIn, dirPathOut))
+            self.noErrors += 1
+
+    def copyAccessDir(self, dirIn):
+        """Copy dir with access image to output batch and verify checksums"""
 
         dirPathInRel = os.path.relpath(dirIn, start=self.dirIn)
         dirPathIn = os.path.abspath(os.path.join(self.dirIn, dirPathInRel))
