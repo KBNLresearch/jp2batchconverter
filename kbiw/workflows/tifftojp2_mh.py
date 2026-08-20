@@ -54,8 +54,6 @@ class Workflow:
         self.etInstance = None
         # Vips instance (set in processBatch function)
         self.vipsInstance = None
-        # Flag that activates processing of concordance tables
-        self.processCTables = True
         # Name of directory that contains concordance tables
         self.cTableDirName = "Concordantie"
         # Flag that activates automatic conversion of paletted input images to a regular colorspace
@@ -149,17 +147,17 @@ class Workflow:
                 if subdirname in self.copyDirs:
                     # Files in copyDirs directories are copied without modification
                     self.copyDir(thisDirectory)
-                if self.processCTables:
-                    if subdirname == self.cTableDirName:
-                        # Update concordance tables
-                        myCTables = ctables.CTables(thisDirectory,
-                                                    self.dirIn,
-                                                    self.dirOut,
-                                                    self.delimiterIn,
-                                                    self.delimiterOut,
-                                                    self.extensionsIn,
-                                                    self.batchManifest)
-                        myCTables.update()
+
+                if subdirname == self.cTableDirName:
+                    # Update concordance tables
+                    myCTables = ctables.CTables(thisDirectory,
+                                                self.dirIn,
+                                                self.dirOut,
+                                                self.delimiterIn,
+                                                self.delimiterOut,
+                                                self.extensionsIn,
+                                                self.batchManifest)
+                    myCTables.update()
 
             for filename in filenames:
                 if filename.startswith("._"):
@@ -185,17 +183,16 @@ class Workflow:
                             writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
                             writer.writerow([tifftoJP2Instance.rowBm[0], tifftoJP2Instance.checksum])
 
-        if self.processCTables:
-            # Cross check entries in concordance tables with batch manifest
-            try:
-                myCTables.verify()
+        # Cross check entries in concordance tables with batch manifest
+        try:
+            myCTables.verify()
 
-                # Add any errors from concordance updating / checking to general error count
-                self.noErrors += myCTables.noErrors
-            except UnboundLocalError:
-                # We end up here if myCtables is undefined
-                logging.error("no concordance tables found in batch")
-                self.noErrors += 1
+            # Add any errors from concordance updating / checking to general error count
+            self.noErrors += myCTables.noErrors
+        except UnboundLocalError:
+            # We end up here if myCtables is undefined
+            logging.error("no concordance tables found in batch")
+            self.noErrors += 1
 
         # Number of errors, warnings to log
         logging.info("workflow completed with {} errors and {} warnings".format(

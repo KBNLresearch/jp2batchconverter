@@ -54,10 +54,6 @@ class Workflow:
         self.etInstance = None
         # Vips instance (set in processBatch function)
         self.vipsInstance = None
-        # Flag that activates processing of concordance tables
-        self.processCTables = False
-        # Name of directory that contains concordance tables
-        self.cTableDirName = None
         # Flag that activates automatic conversion of paletted input images to a regular colorspace
         self.convertPalettedImages = False
         # List of directory names that will copied unchanged from input to output batch
