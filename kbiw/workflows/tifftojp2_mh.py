@@ -33,7 +33,7 @@ class Workflow:
         # Summary file (name only, path is added later)
         self.summaryFile = "summary.txt"
         # Checksum file (name only, path is added later)
-        self.checksumFile = "checksums.sha512"
+        self.checksumFile = "checksums_sha512.csv"
         # Number of errors encountered during workflow
         self.noErrors = 0
         # Number of warnings encountered during workflow
@@ -90,10 +90,19 @@ class Workflow:
         tifftoJP2Instance.convertPalettedImages = self.convertPalettedImages
         tifftoJP2Instance.configure()
 
+        # Create "Pakbon" directory
+        dirPakbon = os.path.join(self.dirOut, "Pakbon")
+        if not os.path.isdir(dirPakbon ):
+            try:
+                os.makedirs(dirPakbon )
+            except exception:
+                msg = "creation of Pakbon directory {} failed".format(dirPakbon)
+                shared.errorExit(msg)
+
         # Add paths to batch manifest, checksum and summary files
-        self.batchManifest = os.path.join(self.dirOut, self.batchManifest)
-        self.checksumFile = os.path.join(self.dirOut, self.checksumFile)
-        self.summaryFile = os.path.join(self.dirOut, self.summaryFile)
+        self.batchManifest = os.path.join(dirPakbon, self.batchManifest)
+        self.checksumFile = os.path.join(dirPakbon, self.checksumFile)
+        self.summaryFile = os.path.join(dirPakbon, self.summaryFile)
 
         # Remove any previous batch manifest / checksum / summary file instances
         if os.path.isfile(self.batchManifest):
