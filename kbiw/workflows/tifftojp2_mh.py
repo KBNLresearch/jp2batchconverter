@@ -54,8 +54,6 @@ class Workflow:
         self.etInstance = None
         # Vips instance (set in processBatch function)
         self.vipsInstance = None
-        # Name of directory that contains concordance tables
-        self.cTableDirName = "Concordantie"
         # Flag that activates automatic conversion of paletted input images to a regular colorspace
         self.convertPalettedImages = False
         # List of directory names that will copied unchanged from input to output batch
@@ -148,7 +146,7 @@ class Workflow:
                     # Files in copyDirs directories are copied without modification
                     self.copyDir(thisDirectory)
 
-                if subdirname == self.cTableDirName:
+                if subdirname == "Concordantie":
                     # Update concordance tables
                     myCTables = ctables.CTables(thisDirectory,
                                                 self.dirIn,
