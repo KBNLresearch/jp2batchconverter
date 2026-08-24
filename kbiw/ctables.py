@@ -46,9 +46,11 @@ class CTables:
                 self.updateCTable(fileIn, fileOut)
 
     def updateCTable(self, fileIn, fileOut):
-        """Update one concordance table"""
+        """Update one concordance table. For each image file, it adds the full path,
+        which is inferred from the name of the concordance table file (master, access)
+        or the name of the image file (target). For images with a file extension that matches
+        self.extensionsIn, the file extension is changed to jp2"""
 
-        # TODO: might not work for file references that include paths
         listOut = []
         rowIndex = 0
         logging.info(
