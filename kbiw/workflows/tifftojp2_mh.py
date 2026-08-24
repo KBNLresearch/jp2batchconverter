@@ -8,6 +8,7 @@ import os
 import shutil
 import csv
 import logging
+import xml.etree.ElementTree as ET
 from .. import tifftojp2
 from .. import shared
 from .. import ctables_mh
@@ -94,17 +95,17 @@ class Workflow:
                 shared.errorExit(msg)
 
         # Create "Pakbon" directory
-        dirPakbon = os.path.join(self.dirOut, "Pakbon")
-        if not os.path.isdir(dirPakbon):
+        self.dirPakbon = os.path.join(self.dirOut, "Pakbon")
+        if not os.path.isdir(self.dirPakbon):
             try:
-                os.makedirs(dirPakbon)
+                os.makedirs(self.dirPakbon)
             except exception:
-                msg = "creation of Pakbon directory {} failed".format(dirPakbon)
+                msg = "creation of Pakbon directory {} failed".format(self.dirPakbon)
                 shared.errorExit(msg)
 
         # Add paths to batch manifest, summary and checksum files
-        self.batchManifest = os.path.join(dirPakbon, self.batchManifest)
-        self.summaryFile = os.path.join(dirPakbon, self.summaryFile)
+        self.batchManifest = os.path.join(self.dirPakbon, self.batchManifest)
+        self.summaryFile = os.path.join(self.dirPakbon, self.summaryFile)
         self.checksumFile = os.path.join(self.dirChecksums, self.checksumFile)
 
         # Remove any previous batch manifest / checksum / summary file instances
@@ -138,6 +139,7 @@ class Workflow:
             writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
             writer.writerow(checksumHeadings)
 
+        """
         # Iterate over directories and files in batch
         for dirname, dirnames, filenames in os.walk(self.dirIn):
             for subdirname in dirnames:
@@ -176,6 +178,10 @@ class Workflow:
             # We end up here if myCtables is undefined
             logging.error("no concordance tables found in batch")
             self.noErrors += 1
+        """
+
+        # Write Pakbon file
+        self.writePakbon()
 
         # Number of errors, warnings to log
         logging.info("workflow completed with {} errors and {} warnings".format(
@@ -293,3 +299,82 @@ class Workflow:
                         rowBm = [thisFileRel, "na", "na", "na", "na", "na", "na", fileMatch, checksumMatch]
                         writer.writerow(rowBm)
 
+
+    def writePakbon(self):
+        """Write pakbon file, based on pakbon in source batch and file statistics of destination batch """
+
+        # Find input pakbon file based on naming pattern
+        foundInputPakbonFile = False
+        parsedPakbonIn = False
+
+        dirPakbonIn = os.path.join(self.dirIn, "Pakbon")
+        for file in os.listdir(dirPakbonIn):
+            if "pakbon" in file and file.endswith(".xml"):
+                pakbonIn = os.path.join(dirPakbonIn , file)
+                foundInputPakbonFile = True
+
+        if foundInputPakbonFile:
+            try:
+                ns = {'dgmmh': 'http://schemas.kb.nl/dgmmh/v1'}
+                tree = ET.parse(pakbonIn)
+                pbroot = tree.getroot()
+                parsedPakbonIn = True
+            except Exception:
+                logging.error("cannot parse XML in {}".format(pakbonIn))
+                self.noErrors += 1
+        else:
+            logging.error("missing pakbon file in input batch")
+            self.noErrors += 1
+
+        if parsedPakbonIn:
+
+            numberOfFilesMaster = 0
+            totalFileSizeMaster = 0
+            averageFileSizeMaster = 0
+            numberOfFilesAccess = 0
+            totalFileSizeAccess = 0
+            averageFileSizeAccess = 0
+            numberOfFilesConcordantie = 0
+            totalFileSizeConcordantie = 0
+            averageFileSizeConcordantie = 0
+            numberOfFilesTargets = 0
+            totalFileSizeTargets = 0
+            averageFileSizeTargets = 0
+            numberOfFilesChecksums = 0
+            totalFileSizeChecksums = 0
+            averageFileSizeChecksums = 0
+
+            filesElt = pbroot.find("dgmmh:files", ns)
+
+            for elt in filesElt:
+                if elt.attrib["fileTypeName"] == "master":
+                    elt.attrib["numberOfFiles"] = str(numberOfFilesMaster)
+                    elt.attrib["totalFileSize"] = str(totalFileSizeMaster)
+                    elt.attrib["averageFileSize"] = str(averageFileSizeMaster)
+                if elt.attrib["fileTypeName"] == "access":
+                    elt.attrib["numberOfFiles"] = str(numberOfFilesAccess)
+                    elt.attrib["totalFileSize"] = str(totalFileSizeAccess)
+                    elt.attrib["averageFileSize"] = str(averageFileSizeAccess)
+                if elt.attrib["fileTypeName"] == "concordantie":
+                    elt.attrib["numberOfFiles"] = str(numberOfFilesConcordantie)
+                    elt.attrib["totalFileSize"] = str(totalFileSizeConcordantie)
+                    elt.attrib["averageFileSize"] = str(averageFileSizeConcordantie)
+                if elt.attrib["fileTypeName"] == "targets":
+                    elt.attrib["numberOfFiles"] = str(numberOfFilesTargets)
+                    elt.attrib["totalFileSize"] = str(totalFileSizeTargets)
+                    elt.attrib["averageFileSize"] = str(averageFileSizeTargets)
+                if elt.attrib["fileTypeName"] == "checksums":
+                    elt.attrib["numberOfFiles"] = str(numberOfFilesChecksums)
+                    elt.attrib["totalFileSize"] = str(totalFileSizeChecksums)
+                    elt.attrib["averageFileSize"] = str(averageFileSizeChecksums)
+
+
+            filesElt.attrib["numberOfFiles"] = str(numberOfFilesMaster + numberOfFilesAccess + numberOfFilesConcordantie + numberOfFilesTargets + numberOfFilesChecksums)
+
+            pakbonOut =  os.path.join(self.dirPakbon, "pakbon.xml")
+
+            try:
+                tree.write(pakbonOut)
+            except Exception:
+                    logging.error("cannot write XML to {}".format(pakbonOut))
+                    self.noErrors += 1
