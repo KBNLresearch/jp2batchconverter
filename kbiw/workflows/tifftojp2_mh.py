@@ -10,7 +10,7 @@ import csv
 import logging
 from .. import tifftojp2
 from .. import shared
-from .. import ctables
+from .. import ctables_mh
 
 
 class Workflow:
@@ -154,7 +154,7 @@ class Workflow:
 
                 if subdirname == "Concordantie":
                     # Update concordance tables
-                    myCTables = ctables.CTables(thisDirectory,
+                    myCTables = ctables_mh.CTables(thisDirectory,
                                                 self.dirIn,
                                                 self.dirOut,
                                                 self.delimiterIn,
