@@ -219,22 +219,6 @@ class Workflow:
                     writer.writerow([self.tifftoJP2Instance.rowBm[0], self.tifftoJP2Instance.checksum])
 
 
-    def copyDir(self, dirIn):
-        """Copy input dir to same relative location in output batch"""
-
-        dirPathInRel = os.path.relpath(dirIn, start=self.dirIn)
-        dirPathIn = os.path.abspath(os.path.join(self.dirIn, dirPathInRel))
-        dirPathOut = os.path.abspath(os.path.join(self.dirOut, dirPathInRel))
-        logging.info("copying directory {} to {}".format(
-            dirPathIn, dirPathOut))
-        try:
-            shutil.copytree(dirPathIn, dirPathOut, dirs_exist_ok=True)
-        except Exception:
-            logging.error("copying data from directory {} to {} resulted in an exception".format(
-                dirPathIn, dirPathOut))
-            self.noErrors += 1
-
-
     def copyAccessDir(self, dirIn):
         """Copy dir with access image to output batch and verify checksums"""
 
