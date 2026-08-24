@@ -126,8 +126,6 @@ class CTables:
 
     def verify(self):
         """Cross-check concordance tables against batch manifest (including reverse check)"""
-        # TODO: code assumes fixed position + order of columns in concordance tables
-        # verify if this is correct. If not, use column names.
 
         logging.info("Verifying concordance tables against batch manifest")
 
@@ -154,9 +152,6 @@ class CTables:
             return
         cTables = os.listdir(self.dirConcordanceOut)
         for cTable in cTables:
-            # First part of file name refers to directory in "Signaturen"
-            sigDir = cTable.split("_")[0]
-            masterDirPath = os.path.join("Signaturen", sigDir, "Master")
             cTable = os.path.join(self.dirConcordanceOut, cTable)
             with open(cTable, 'r', newline='', encoding='utf-8') as fCTab:
                 reader = csv.reader(fCTab, delimiter=self.delimiterOut)
@@ -166,35 +161,12 @@ class CTables:
             imagesCTable = []
 
             rowIndex = 0
+            colIndex = 0
             for row in cTabData:
                 if rowIndex > 0:
-                    # First column: master image
-                    imageMaster = row[0]
-                    # Add masterDirPath to get corresponding batch manifest value
-                    imageMasterFullPath = os.path.join(
-                        masterDirPath, imageMaster)
-                    imagesCTable.append(imageMasterFullPath)
-
-                    # Columns 3 - 6 refer to target images (column 2 refers to access images, which are not in manifest)
-                    # TODO set columns in class variable
-                    for i in range(2, 6):
-                        imageTarget = row[i]
-                        # Directory of this image follows from file name
-                        try:
-                            nameComponents = imageTarget.split(".")[
-                                0].split("_")
-                        except IndexError:
-                            nameComponents = []
-                        try:
-                            targetDir = "{}_{}_{}".format(
-                                nameComponents[0], nameComponents[2], nameComponents[3])
-                            # Construct full path in corresponding batch manifest value
-                            imageTargetFullPath = os.path.join(
-                                "Targets", targetDir, imageTarget)
-                            imagesCTable.append(imageTargetFullPath)
-                        except IndexError:
-                            pass
-
+                    for col in row:
+                        imagesCTable.append(col)
+                        colIndex += 1
                 rowIndex += 1
 
             for image in imagesCTable:
