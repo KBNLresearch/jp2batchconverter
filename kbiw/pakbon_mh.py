@@ -117,7 +117,8 @@ class Pakbon:
         parsedPakbonIn = False
 
         dirPakbonIn = os.path.join(self.dirIn, "Pakbon")
-        for file in os.listdir(dirPakbonIn):
+        files = [f for f in os.listdir(thisDirectory) if os.path.isfile(os.path.join(thisDirectory, f))]
+        for file in files:
             if "pakbon" in file and file.endswith(".xml"):
                 pakbonIn = os.path.join(dirPakbonIn , file)
                 foundInputPakbonFile = True

@@ -235,7 +235,8 @@ class Workflow:
 
         # Find input access checksums file based on naming pattern
         dirChecksumsIn = os.path.join(self.dirIn, "Checksums")
-        for file in os.listdir(dirChecksumsIn):
+        files = [f for f in os.listdir(dirChecksumsIn) if os.path.isfile(os.path.join(dirChecksumsIn, f))]
+        for file in files:
             if file.endswith("Signaturen_access_renamed_checksum_sha512.csv"):
                 fileAccessChecksums = os.path.join(dirChecksumsIn, file)
                 foundInputChecksumFile = True
