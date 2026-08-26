@@ -303,6 +303,100 @@ class Workflow:
     def writePakbon(self):
         """Write pakbon file, based on pakbon in source batch and file statistics of destination batch """
 
+        # Initial values of output stats
+        numberOfFilesMaster = 0
+        totalFileSizeMaster = 0
+        numberOfFilesAccess = 0
+        totalFileSizeAccess = 0
+        numberOfFilesConcordantie = 0
+        totalFileSizeConcordantie = 0
+        numberOfFilesTargets = 0
+        totalFileSizeTargets = 0
+        numberOfFilesChecksums = 0
+        totalFileSizeChecksums = 0
+        averageFileSize = 0
+        averageFileSizeMaster = 0
+        averageFileSizeAccess = 0
+        averageFileSizeConcordantie = 0
+        averageFileSizeTargets = 0
+        averageFileSizeChecksums = 0
+
+        # Iterate over directories and files in output batch
+        for dirname, dirnames, filenames in os.walk(self.dirOut):
+            for subdirname in dirnames:
+                thisDirectory = os.path.join(dirname, subdirname)
+
+                if subdirname == "Master":
+                    #files = os.listdir(thisDirectory)
+                    files = [f for f in os.listdir(thisDirectory) if os.path.isfile(os.path.join(thisDirectory, f))]
+                    for file in files:
+                        filePath = os.path.join(thisDirectory, file)
+                        fileSize = os.path.getsize(filePath)
+                        numberOfFilesMaster += 1
+                        totalFileSizeMaster += fileSize
+
+                if subdirname == "Access_Renamed":
+                    files = [f for f in os.listdir(thisDirectory) if os.path.isfile(os.path.join(thisDirectory, f))]
+                    for file in files:
+                        filePath = os.path.join(thisDirectory, file)
+                        fileSize = os.path.getsize(filePath)
+                        numberOfFilesAccess += 1
+                        totalFileSizeAccess += fileSize
+
+                if subdirname == "Targets":
+                    dirs = [d for d in os.listdir(thisDirectory) if os.path.isdir(os.path.join(thisDirectory, d))]
+                    for dir in dirs:
+                        dirTarget = os.path.join(thisDirectory, dir)
+                        files = [f for f in os.listdir(dirTarget) if os.path.isfile(os.path.join(dirTarget, f))]
+                        for file in files:
+                            filePath = os.path.join(dirTarget, file)
+                            fileSize = os.path.getsize(filePath)
+                            numberOfFilesTargets += 1
+                            totalFileSizeTargets += fileSize
+
+                if subdirname == "Concordantie":
+                    files = [f for f in os.listdir(thisDirectory) if os.path.isfile(os.path.join(thisDirectory, f))]
+                    for file in files:
+                        filePath = os.path.join(thisDirectory, file)
+                        fileSize = os.path.getsize(filePath)
+                        numberOfFilesConcordantie += 1
+                        totalFileSizeConcordantie += fileSize
+
+                if subdirname == "Checksums":
+                    files = [f for f in os.listdir(thisDirectory) if os.path.isfile(os.path.join(thisDirectory, f))]
+                    for file in files:
+                        filePath = os.path.join(thisDirectory, file)
+                        fileSize = os.path.getsize(filePath)
+                        numberOfFilesChecksums += 1
+                        totalFileSizeChecksums += fileSize
+
+        # Calculate aggregate stats
+        numberOfFiles = numberOfFilesMaster + numberOfFilesAccess + numberOfFilesConcordantie + numberOfFilesTargets + numberOfFilesChecksums
+        totalFileSize = totalFileSizeMaster + totalFileSizeAccess + totalFileSizeConcordantie + totalFileSizeTargets + totalFileSizeChecksums
+        try:
+            averageFileSize = totalFileSize/numberOfFiles
+        except ZeroDivisionError:
+            pass
+        try:
+            averageFileSizeMaster = totalFileSizeMaster/numberOfFilesMaster
+        except ZeroDivisionError:
+            pass
+        try:
+            averageFileSizeAccess = totalFileSizeAccess/numberOfFilesAccess
+        except ZeroDivisionError:
+            pass
+        try:
+            averageFileSizeConcordantie = totalFileSizeConcordantie/numberOfFilesConcordantie
+        except ZeroDivisionError:
+            pass
+        try:
+            averageFileSizeTargets = totalFileSizeTargets/numberOfFilesTargets
+        except ZeroDivisionError:
+            pass
+        try:
+            averageFileSizeChecksums = totalFileSizeChecksums/numberOfFilesChecksums
+        except ZeroDivisionError:
+            pass
         # Find input pakbon file based on naming pattern
         foundInputPakbonFile = False
         parsedPakbonIn = False
@@ -328,23 +422,10 @@ class Workflow:
 
         if parsedPakbonIn:
 
-            numberOfFilesMaster = 0
-            totalFileSizeMaster = 0
-            averageFileSizeMaster = 0
-            numberOfFilesAccess = 0
-            totalFileSizeAccess = 0
-            averageFileSizeAccess = 0
-            numberOfFilesConcordantie = 0
-            totalFileSizeConcordantie = 0
-            averageFileSizeConcordantie = 0
-            numberOfFilesTargets = 0
-            totalFileSizeTargets = 0
-            averageFileSizeTargets = 0
-            numberOfFilesChecksums = 0
-            totalFileSizeChecksums = 0
-            averageFileSizeChecksums = 0
-
             filesElt = pbroot.find("dgmmh:files", ns)
+            filesElt.attrib["numberOfFiles"] = str(numberOfFiles)
+            filesElt.attrib["totalFileSize"] = str(totalFileSize)
+            filesElt.attrib["averageFileSize"] = str(averageFileSize)
 
             for elt in filesElt:
                 if elt.attrib["fileTypeName"] == "master":
