@@ -140,7 +140,6 @@ class Workflow:
             writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
             writer.writerow(checksumHeadings)
 
-        """
         # Iterate over directories and files in batch
         for dirname, dirnames, filenames in os.walk(self.dirIn):
             for subdirname in dirnames:
@@ -179,7 +178,6 @@ class Workflow:
             # We end up here if myCtables is undefined
             logging.error("no concordance tables found in batch")
             self.noErrors += 1
-        """
 
         # Write Pakbon file
         PakbonInstance = pakbon_mh.Pakbon(self.dirIn, self.dirOut)
