@@ -140,7 +140,21 @@ class Workflow:
             writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
             writer.writerow(checksumHeadings)
 
-        # Iterate over directories and files in batch
+        # First iterate over input batch to count number of files that are to be converted
+        # (only used for computing progress info)
+        self.noFilesToConvert = 0
+        self.noFilesConverted = 0
+
+        for dirname, dirnames, filenames in os.walk(self.dirIn):
+            for filename in filenames:
+                    thisExtension = os.path.splitext(filename)[1]
+                    thisExtension = thisExtension.upper().strip('.')
+                    if thisExtension in self.extensionsIn:
+                        self.noFilesToConvert += 1
+
+        print("Found {} images to convert in batch".format(self.noFilesToConvert))
+
+        # Iterate over input batch again, now with processing
         for dirname, dirnames, filenames in os.walk(self.dirIn):
             for subdirname in dirnames:
                 thisDirectory = os.path.join(dirname, subdirname)
@@ -148,6 +162,7 @@ class Workflow:
                 if subdirname == "Access_Renamed":
                     # Access JPEGs are copied without modification
                     # Checksums are verified against checksum file in source batch
+                    print("Copying access images from directory {}".format(thisDirectory))
                     self.copyAccessDir(thisDirectory)
 
                 if subdirname == "Pakbon":
@@ -156,6 +171,7 @@ class Workflow:
 
                 if subdirname == "Concordantie":
                     # Update concordance tables
+                    print("Updating concordance tables from directory {}".format(thisDirectory))
                     myCTables = ctables_mh.CTables(thisDirectory,
                                                 self.dirIn,
                                                 self.dirOut,
@@ -165,6 +181,7 @@ class Workflow:
                                                 self.batchManifest)
                     myCTables.update()
 
+            # Actual image conversion/processing loop
             for filename in filenames:
                 self.processFile(filename, dirname)
 
@@ -224,6 +241,11 @@ class Workflow:
                 with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fChecksum:
                     writer = csv.writer(fChecksum, delimiter=self.delimiterOut)
                     writer.writerow([self.tifftoJP2Instance.rowBm[0], self.tifftoJP2Instance.checksum])
+
+                # Update counter and update console progress info
+                self.noFilesConverted += 1
+                percentConverted = "{:.2f}".format(100*(self.noFilesConverted/self.noFilesToConvert))
+                print("Converted {}/{} images ({}%)".format(self.noFilesConverted, self.noFilesToConvert, percentConverted))
 
 
     def copyAccessDir(self, dirIn):

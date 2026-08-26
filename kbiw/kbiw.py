@@ -192,8 +192,7 @@ def main():
         os.remove(logFile)
 
     # Set up logging
-    logging.basicConfig(handlers=[logging.StreamHandler(sys.stdout),
-                                  logging.FileHandler(logFile, 'a', 'utf-8')],
+    logging.basicConfig(handlers=[logging.FileHandler(logFile, 'a', 'utf-8')],
                         level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
