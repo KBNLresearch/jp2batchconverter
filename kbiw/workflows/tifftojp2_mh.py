@@ -202,7 +202,7 @@ class Workflow:
         self.noErrors += PakbonInstance.noErrors
 
         # Number of errors, warnings to console
-        print("workflow completed with {} errors and {} warnings. See log file for details".format(
+        print("Workflow completed with {} errors and {} warnings. See log file for details".format(
             self.noErrors, self.noWarnings))
 
         # Write summary file
