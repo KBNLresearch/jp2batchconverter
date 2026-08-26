@@ -110,6 +110,20 @@ class Workflow:
             writer = csv.writer(fManifest, delimiter=self.delimiterOut)
             writer.writerow(manifestHeadings)
 
+        # First iterate over input batch to count number of files that are to be converted
+        # (only used for computing progress info)
+        self.noFilesToConvert = 0
+        self.noFilesConverted = 0
+
+        for dirname, dirnames, filenames in os.walk(self.dirIn):
+            for filename in filenames:
+                    thisExtension = os.path.splitext(filename)[1]
+                    thisExtension = thisExtension.upper().strip('.')
+                    if thisExtension in self.extensionsIn:
+                        self.noFilesToConvert += 1
+
+        print("Found {} images to convert in batch".format(self.noFilesToConvert))
+
         # Iterate over directories and files in batch
         for dirname, dirnames, filenames in os.walk(self.dirIn):
             for subdirname in dirnames:
@@ -160,6 +174,11 @@ class Workflow:
                 # Write checksum line to file
                 with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fC:
                     fC.write(checksumLine)
+
+                # Update counter and update console progress info
+                self.noFilesConverted += 1
+                percentConverted = "{:.2f}".format(100*(self.noFilesConverted/self.noFilesToConvert))
+                print("Converted {}/{} images ({}%)".format(self.noFilesConverted, self.noFilesToConvert, percentConverted))
 
 
     def copyDir(self, dirIn):
