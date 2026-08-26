@@ -135,8 +135,8 @@ class Workflow:
             for filename in filenames:
                 self.processFile(filename, dirname)
 
-        # Number of errors, warnings to log
-        logging.info("workflow completed with {} errors and {} warnings".format(
+        # Number of errors, warnings to console
+        print("workflow completed with {} errors and {} warnings. See log file for details".format(
             self.noErrors, self.noWarnings))
 
         # Write summary file
