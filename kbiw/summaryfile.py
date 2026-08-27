@@ -9,15 +9,13 @@ import logging
 class SummaryFile:
     """SummaryFile class"""
 
-    def __init__(self, summaryFile, kbiwVersion, grokVersion, noErrors, noWarnings):
+    def __init__(self, summaryFile, summaryDict):
 
 
         self.summaryFile = summaryFile
-        self.kbiwVersion = kbiwVersion
+        self.summaryDict = summaryDict
         self.grokVersion = grokVersion
-        self.noErrors = noErrors
-        self.noWarnings = noWarnings
-
+        self.noErrors = 0
 
     def addProperty(self, element, tag, text):
         """Append childnode with text to Element"""
@@ -35,24 +33,17 @@ class SummaryFile:
 
         # Create root element
         root = ET.Element("kbiw", {'xmlns': nsString,
-                                    'xmlns:xsi': xsiNsString})
+                                   'xmlns:xsi': xsiNsString})
 
         # Add child elements
-        self.addProperty(root, "kbiwVersion", self.kbiwVersion)
-        self.addProperty(root, "grokVersion", self.grokVersion)
-        self.addProperty(root, "noErrors", self.noErrors)
-        self.addProperty(root, "noWarnings", self.noWarnings)
-        self.addProperty(root, "comment", "See batch manifest and log file for details on errors and warnings")
+        for key, value in self.summaryDict.items():
+            self.addProperty(root, key, value)
 
         # Element to string
         xmlOut = ET.tostring(root, 'unicode', 'xml')
 
         # Make xml pretty
         xmlPretty = minidom.parseString(xmlOut).toprettyxml('    ')
-
-        # Set noErrors to 0, in order to get meaningful output in case writing fails
-        # (this is a bit confusing as this variable is used for 2 different things here)
-        self.noErrors = 0
 
         # Write output
         try:

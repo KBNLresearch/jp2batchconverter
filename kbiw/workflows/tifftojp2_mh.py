@@ -203,12 +203,15 @@ class Workflow:
         PakbonInstance.writePakbon()
         self.noErrors += PakbonInstance.noErrors
 
+        # Dictionary with key/value pairs for summary file
+        summaryDict = {"kbiwVersion": self.kbiwVersion,
+                       "grokVersion": self.tifftoJP2Instance.grokInstance.version,
+                       "noErrors": str(self.noErrors),
+                       "noWarnings": str(self.noWarnings),
+                       "comment": "See batch manifest and log file for details on errors and warnings"}
+
         # Write summary file
-        SummaryFileInstance = summaryfile.SummaryFile(self.summaryFile,
-                                                      self.kbiwVersion,
-                                                      self.tifftoJP2Instance.grokInstance.version,
-                                                      self.noErrors,
-                                                      self.noWarnings)
+        SummaryFileInstance = summaryfile.SummaryFile(self.summaryFile, summaryDict)
         SummaryFileInstance.writeSummaryFile()
 
         self.noErrors += SummaryFileInstance.noErrors
