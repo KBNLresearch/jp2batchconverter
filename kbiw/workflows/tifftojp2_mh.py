@@ -35,7 +35,7 @@ class Workflow:
         # Batch manifest (name only, path is added later)
         self.batchManifest = "manifest.csv"
         # Summary file (name only, path is added later)
-        self.summaryFile = "summary.txt"
+        self.summaryFile = "summary.xml"
         # Checksum file (name only, path is added later)
         self.checksumFile = "checksums_sha512.csv"
         # Number of errors encountered during workflow
