@@ -14,7 +14,6 @@ class SummaryFile:
 
         self.summaryFile = summaryFile
         self.summaryDict = summaryDict
-        self.grokVersion = grokVersion
         self.noErrors = 0
 
     def addProperty(self, element, tag, text):
