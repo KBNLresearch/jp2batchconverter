@@ -206,9 +206,11 @@ def main():
     if workflow == "tifftojp2-mh":
         # Middeleeuwse Handschriften
         wf = tifftojp2_mh.Workflow()
+        wf.kbiwVersion = __version__
     elif workflow == "tifftojp2-ie":
         # Indisch Erfgoed
         wf = tifftojp2_generic.Workflow()
+        wf.kbiwVersion = __version__
         # Compression profile
         wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check
@@ -223,6 +225,7 @@ def main():
     elif workflow == "tifftojp2-generic":
         # Generic workflow - input batch only contains TIFF images
         wf = tifftojp2_generic.Workflow()
+        wf.kbiwVersion = __version__
         # Compression profile
         wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check

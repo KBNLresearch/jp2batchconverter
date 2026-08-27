@@ -12,6 +12,7 @@ from .. import tifftojp2
 from .. import shared
 from .. import ctables_mh
 from .. import pakbon_mh
+from .. import summaryfile
 
 
 class Workflow:
@@ -19,6 +20,8 @@ class Workflow:
 
     def __init__(self):
         """initialise workflow class instance"""
+        # kbiw version
+        self.kbiwVersion = None
         # List of input extensions that will be converted to JP2
         self.extensionsIn = ["tif", "tiff"]
         # Compression profile (name only, path is added later)
@@ -205,12 +208,12 @@ class Workflow:
             self.noErrors, self.noWarnings))
 
         # Write summary file
-        with open(self.summaryFile, 'w', newline='', encoding='utf-8') as fSum:
-            fSum.write("Grok version: {}\n".format(self.tifftoJP2Instance.grokInstance.version))
-            fSum.write("Errors: {}\n".format(self.noErrors))
-            fSum.write("Warnings: {}\n".format(self.noWarnings))
-            fSum.write(
-                "See batch manifest and log file for details on errors and warnings\n")
+        SummaryFileInstance = summaryfile.SummaryFile(self.summaryFile,
+                                                      self.kbiwVersion,
+                                                      self.tifftoJP2Instance.grokInstance.version,
+                                                      self.noErrors,
+                                                      self.noWarnings)
+        SummaryFileInstance.writeSummaryFile()
 
 
     def processFile(self, filename, dirname):
