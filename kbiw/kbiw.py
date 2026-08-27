@@ -86,8 +86,9 @@ def configure(configPath):
     try:
         with open(configFile, 'r', encoding='utf-8') as f:
             configDict = json.load(f)
-    except:
-        raise
+    except json.decoder.JSONDecodeError:
+        msg = "invalid JSON data in configuration file (hint: check that file paths only contain forward slashes!)"
+        shared.errorExit(msg)
 
     # Some light validation of config file contents
     if not "grokDir" in configDict:

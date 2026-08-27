@@ -161,6 +161,8 @@ Open the configuration file ("config.json") in a text editor, and edit the follo
 |exifToolExecutable|ExifTool executable|`C:/exiftool/exiftool.exe` (Windows); `/bin/exiftool` (Linux)|
 |vipsBinDir|Libvips binary dir (only needed on Windows, ignored on Linux/macOS)|`C:/vips-dev/bin` (Windows)|
 
+**IMPORTANT**: always use **forward slashes** for these variables, even on a Windows system! This is because forward slashes are not allowed in JSON. 
+
 Here's an example for a Windows system:
 
 
