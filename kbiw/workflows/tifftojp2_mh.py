@@ -168,8 +168,21 @@ class Workflow:
                     self.copyAccessDir(thisDirectory)
 
                 if subdirname == "Pakbon":
-                    # Files in Pakbon directory - TODO
-                    pass
+                    # Files in Pakbon directory
+                    print("Coping files from directory {}".format(thisDirectory))
+                    files = [f for f in os.listdir(thisDirectory) if os.path.isfile(os.path.join(thisDirectory, f))]
+                    for file in files:
+                        if "pakbon" in file and file.endswith(".xml"):
+                            # pakbon file, skip (is generated later on)
+                            pass
+                        else:
+                            fileIn = os.path.join(thisDirectory, file)
+                            fileOut = os.path.join(self.dirPakbon, file)
+                            try:
+                                shutil.copyfile(fileIn, fileOut)
+                            except Exception:
+                                logging.error("cannot copy file to {}".format(fileOut))
+                                self.noErrors += 1
 
                 if subdirname == "Concordantie":
                     # Update concordance tables
