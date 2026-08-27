@@ -8,7 +8,6 @@ import os
 import shutil
 import csv
 import logging
-import xml.etree.ElementTree as ET
 from .. import tifftojp2
 from .. import shared
 from .. import ctables_mh

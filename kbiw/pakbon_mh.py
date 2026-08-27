@@ -126,6 +126,9 @@ class Pakbon:
         if foundInputPakbonFile:
             try:
                 ns = {'dgmmh': 'http://schemas.kb.nl/dgmmh/v1'}
+                # Register namespace, so tag is preserved in output file
+                # (from: https://stackoverflow.com/a/54491129/1209004)
+                ET.register_namespace('dgmmh', 'http://schemas.kb.nl/dgmmh/v1')
                 tree = ET.parse(pakbonIn)
                 pbroot = tree.getroot()
                 parsedPakbonIn = True
