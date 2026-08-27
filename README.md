@@ -212,15 +212,19 @@ This converts all TIFF images (identified by a ".tif" or ".tiff" file extension)
 
 In addition to this, it writes the following files to the root of the output batch:
 
-### summary.txt
+### summary.xml
 
-This is a text file with a (very) brief summary of the resuls of the workflow. Here's an example:
+This is an XML file with a brief summary of the resuls of the workflow. Here's an example:
 
-```
-Grok version: 20.3.3
-Errors: 0
-Warnings: 0
-See batch manifest and log file for details on errors and warnings
+``` xml
+<?xml version="1.0" ?>
+<kbiw xmlns="http://kb.nl/ns/kbiw/v1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <kbiwVersion>0.1.2</kbiwVersion>
+    <grokVersion>20.3.5</grokVersion>
+    <noErrors>1</noErrors>
+    <noWarnings>0</noWarnings>
+    <comment>See batch manifest and log file for details on errors and warnings</comment>
+</kbiw>
 ```
 
 #### manifest.csv
