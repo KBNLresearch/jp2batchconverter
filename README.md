@@ -214,7 +214,7 @@ In addition to this, it writes the following files to the root of the output bat
 
 ### summary.xml
 
-This is an XML file with a brief summary of the resuls of the workflow. Here's an example:
+This is an XML file with a brief summary of the results of the workflow. Here's an example:
 
 ``` xml
 <?xml version="1.0" ?>
