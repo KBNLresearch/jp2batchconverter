@@ -138,9 +138,6 @@ class Workflow:
             for filename in filenames:
                 self.processFile(filename, dirname)
 
-        # Number of errors, warnings to console
-        print("Workflow completed with {} errors and {} warnings. See log file for details.".format(
-            self.noErrors, self.noWarnings))
 
         # Write summary file
         SummaryFileInstance = summaryfile.SummaryFile(self.summaryFile,
@@ -149,6 +146,12 @@ class Workflow:
                                                       self.noErrors,
                                                       self.noWarnings)
         SummaryFileInstance.writeSummaryFile()
+
+        self.noErrors += SummaryFileInstance.noErrors
+
+        # Number of errors, warnings to console
+        print("Workflow completed with {} errors and {} warnings. See log file for details.".format(
+            self.noErrors, self.noWarnings))
 
 
     def processFile(self, filename, dirname):

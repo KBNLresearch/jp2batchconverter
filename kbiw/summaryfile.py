@@ -3,6 +3,7 @@
 
 import os
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 import logging
 
 class SummaryFile:
@@ -41,11 +42,23 @@ class SummaryFile:
         self.addProperty(root, "grokVersion", self.grokVersion)
         self.addProperty(root, "noErrors", self.noErrors)
         self.addProperty(root, "noWarnings", self.noWarnings)
-        self.addProperty(root, "comment", "See batch manifest and log file for details on errors and warning")
+        self.addProperty(root, "comment", "See batch manifest and log file for details on errors and warnings")
 
         # Element to string
         xmlOut = ET.tostring(root, 'unicode', 'xml')
 
+        # Make xml pretty
+        xmlPretty = minidom.parseString(xmlOut).toprettyxml('    ')
+
+        # Set noErrors to 0, in order to get meaningful output in case writing fails
+        # (this is a bit confusing as this variable is used for 2 different things here)
+        self.noErrors = 0
+
         # Write output
-        with open(self.summaryFile, 'w', newline='', encoding='utf-8') as fSum:
-            fSum.write(xmlOut)
+        try:
+            with open(self.summaryFile, 'w', newline='', encoding='utf-8') as fSum:
+                fSum.write(xmlPretty)
+        except Exception:
+                logging.error("cannot write summary file to {}".format(self.summaryFile))
+                self.noErrors += 1
+

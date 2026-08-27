@@ -203,10 +203,6 @@ class Workflow:
         PakbonInstance.writePakbon()
         self.noErrors += PakbonInstance.noErrors
 
-        # Number of errors, warnings to console
-        print("Workflow completed with {} errors and {} warnings. See log file for details.".format(
-            self.noErrors, self.noWarnings))
-
         # Write summary file
         SummaryFileInstance = summaryfile.SummaryFile(self.summaryFile,
                                                       self.kbiwVersion,
@@ -214,6 +210,12 @@ class Workflow:
                                                       self.noErrors,
                                                       self.noWarnings)
         SummaryFileInstance.writeSummaryFile()
+
+        self.noErrors += SummaryFileInstance.noErrors
+
+        # Number of errors, warnings to console
+        print("Workflow completed with {} errors and {} warnings. See log file for details.".format(
+            self.noErrors, self.noWarnings))
 
 
     def processFile(self, filename, dirname):
