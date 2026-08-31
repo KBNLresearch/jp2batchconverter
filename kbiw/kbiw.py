@@ -40,7 +40,8 @@ def parseCommandLine():
     parser.add_argument("workflow",
                         action="store",
                         type=str,
-                        help="workflow (tifftojp2-generic, tifftojp2-generic-convertpaletted, tifftojp2-mh, tifftojp2-ie)")
+                        help="workflow (tifftojp2-generic, tifftojp2-generic-convertpaletted, tifftojp2-mh, \
+                        tifftojp2-ie)")
     parser.add_argument("--version", "-v",
                         action="version",
                         version=__version__)
@@ -91,37 +92,37 @@ def configure(configPath):
         shared.errorExit(msg)
 
     # Some light validation of config file contents
-    if not "grokDir" in configDict:
+    if "grokDir" not in configDict:
         msg = "\"grokDir\" entry missing in configuration file"
         shared.errorExit(msg)
-    if not "exifToolExecutable" in configDict:
+    if "exifToolExecutable" not in configDict:
         msg = "\"exifToolExecutable\" entry missing in configuration file"
         shared.errorExit(msg)
-    if not "vipsBinDir" in configDict:
+    if "vipsBinDir" not in configDict:
         msg = "\"vipsBinDir\" entry missing configuration file"
         shared.errorExit(msg)
 
     try:
         with open(cprofilesFile, 'r', encoding='utf-8') as f:
             cprofilesDict = json.load(f)
-    except:
+    except Exception:
         raise
 
-    if not "compressionProfiles" in cprofilesDict:
+    if "compressionProfiles" not in cprofilesDict:
         msg = "\"compressionProfiles\" entry missing in compression profiles file"
         shared.errorExit(msg)
 
     for compressionProfile in cprofilesDict["compressionProfiles"]:
-        if not "name" in compressionProfile:
+        if "name" not in compressionProfile:
             msg = "\"name\" entry missing in compression profiles file"
             shared.errorExit(msg)
-        if type(compressionProfile["name"]) != str:
+        if not isinstance(compressionProfile["name"], str):
             msg = "\"name\" value is not a string"
             shared.errorExit(msg)
-        if not "params" in compressionProfile:
+        if "params" not in compressionProfile:
             msg = "\"params\" entry missing in compression profiles file"
             shared.errorExit(msg)
-        if type(compressionProfile["params"]) != list:
+        if not isinstance(compressionProfile["params"], list):
             msg = "\"params\" value is not a list"
             shared.errorExit(msg)
 
@@ -164,7 +165,7 @@ def main():
     # Check if vipsBinDir exists (Windows only)
     if sys.platform == "win32":
         vipsBinDir = configDict["vipsBinDir"]
-        if not os.path.isdir (os.path.normpath(vipsBinDir)):
+        if not os.path.isdir(os.path.normpath(vipsBinDir)):
             msg = "vipsBinDir ({}) not found".format(vipsBinDir)
             shared.errorExit(msg)
 
