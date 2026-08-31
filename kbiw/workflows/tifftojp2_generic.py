@@ -26,9 +26,7 @@ class Workflow:
         self.compressionProfile = None
         # Schematron schema used for properties check
         self.schema = None
-        # Delimiter used in input concordance tables
-        self.delimiterIn = ";"
-        # Delimiter used in summary file and output concordance tables
+        # Delimiter for CSV output
         self.delimiterOut = ";"
         # Batch manifest (name only, path is added later)
         self.batchManifest = "manifest.csv"
@@ -133,6 +131,7 @@ class Workflow:
                 thisDirectory = os.path.join(dirname, subdirname)
                 if subdirname in self.copyDirs:
                     # Files in copyDirs directories are copied without modification
+                    print("Copying files from directory {}".format(thisDirectory))
                     self.copyDir(thisDirectory)
 
             for filename in filenames:
@@ -202,3 +201,29 @@ class Workflow:
             logging.error("copying data from directory {} to {} resulted in an exception".format(
                 dirPathIn, dirPathOut))
             self.noErrors += 1
+
+        # Iterate over files
+        for dirname, dirnames, filenames in os.walk(dirPathOut):
+            for filename in filenames:
+                if filename.startswith("._"):
+                    # Ignore AppleDouble resource fork files (identified here by name)
+                    pass
+                else:
+                    thisFile = os.path.join(dirname, filename)
+                    # File reference, relative to output directory
+                    thisFileRel = os.path.relpath(thisFile, start=self.dirOut)
+                    # Calculate checksum (SHA-512)
+                    checksum = shared.generate_file_sha512(thisFile)
+
+                    # Construct checksum line, following https://superuser.com/a/1566139/681049
+                    checksumLine = "{}  {}\n".format(checksum, thisFileRel)
+
+                    # Write checksum line to file
+                    with open(self.checksumFile, 'a', newline='', encoding='utf-8') as fC:
+                        fC.write(checksumLine)
+
+                    # Write row to batch manifest
+                    with open(self.batchManifest, 'a', newline='', encoding='utf-8') as fManifest:
+                        writer = csv.writer(fManifest, delimiter=self.delimiterOut)
+                        rowBm = [thisFileRel, "na", "na", "na", "na", "na", "na"]
+                        writer.writerow(rowBm)

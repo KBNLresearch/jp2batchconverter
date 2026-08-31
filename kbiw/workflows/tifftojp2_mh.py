@@ -28,9 +28,7 @@ class Workflow:
         self.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check
         self.schema = "kbMaster_2026.sch"
-        # Delimiter used in input concordance tables
-        self.delimiterIn = ";"
-        # Delimiter used in summary file and output concordance tables
+        # Delimiter for CSV output
         self.delimiterOut = ";"
         # Batch manifest (name only, path is added later)
         self.batchManifest = "manifest.csv"
@@ -186,6 +184,7 @@ class Workflow:
                 if subdirname == "Concordantie":
                     # Update concordance tables
                     print("Updating concordance tables from directory {}".format(thisDirectory))
+                    delimiterIn = ";"
                     myCTables = ctables_mh.CTables(thisDirectory,
                                                    self.dirIn,
                                                    self.dirOut,
