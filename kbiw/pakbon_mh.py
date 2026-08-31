@@ -6,6 +6,7 @@ import os
 import xml.etree.ElementTree as ET
 import logging
 
+
 class Pakbon:
     """Pakbon class"""
 
@@ -42,7 +43,6 @@ class Pakbon:
                 thisDirectory = os.path.join(dirname, subdirname)
 
                 if subdirname == "Master":
-                    #files = os.listdir(thisDirectory)
                     files = [f for f in os.listdir(thisDirectory) if os.path.isfile(os.path.join(thisDirectory, f))]
                     for file in files:
                         filePath = os.path.join(thisDirectory, file)
@@ -86,8 +86,10 @@ class Pakbon:
                         totalFileSizeChecksums += fileSize
 
         # Calculate aggregate stats
-        numberOfFiles = numberOfFilesMaster + numberOfFilesAccess + numberOfFilesConcordantie + numberOfFilesTargets + numberOfFilesChecksums
-        totalFileSize = totalFileSizeMaster + totalFileSizeAccess + totalFileSizeConcordantie + totalFileSizeTargets + totalFileSizeChecksums
+        numberOfFiles = (numberOfFilesMaster + numberOfFilesAccess + numberOfFilesConcordantie +
+                         numberOfFilesTargets + numberOfFilesChecksums)
+        totalFileSize = (totalFileSizeMaster + totalFileSizeAccess + totalFileSizeConcordantie +
+                         totalFileSizeTargets + totalFileSizeChecksums)
         try:
             averageFileSize = totalFileSize/numberOfFiles
         except ZeroDivisionError:
@@ -120,7 +122,7 @@ class Pakbon:
         files = [f for f in os.listdir(dirPakbonIn) if os.path.isfile(os.path.join(dirPakbonIn, f))]
         for file in files:
             if "pakbon" in file and file.endswith(".xml"):
-                pakbonIn = os.path.join(dirPakbonIn , file)
+                pakbonIn = os.path.join(dirPakbonIn, file)
                 foundInputPakbonFile = True
 
         if foundInputPakbonFile:
@@ -168,13 +170,14 @@ class Pakbon:
                     elt.attrib["totalFileSize"] = str(totalFileSizeChecksums)
                     elt.attrib["averageFileSize"] = str(averageFileSizeChecksums)
 
+            filesElt.attrib["numberOfFiles"] = str(numberOfFilesMaster + numberOfFilesAccess +
+                                                   numberOfFilesConcordantie + numberOfFilesTargets +
+                                                   numberOfFilesChecksums)
 
-            filesElt.attrib["numberOfFiles"] = str(numberOfFilesMaster + numberOfFilesAccess + numberOfFilesConcordantie + numberOfFilesTargets + numberOfFilesChecksums)
-
-            pakbonOut =  os.path.join(self.dirOut, "Pakbon", "pakbon.xml")
+            pakbonOut = os.path.join(self.dirOut, "Pakbon", "pakbon.xml")
 
             try:
                 tree.write(pakbonOut)
             except Exception:
-                    logging.error("cannot write XML to {}".format(pakbonOut))
-                    self.noErrors += 1
+                logging.error("cannot write XML to {}".format(pakbonOut))
+                self.noErrors += 1
