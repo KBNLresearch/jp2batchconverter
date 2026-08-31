@@ -188,7 +188,7 @@ class Workflow:
                     myCTables = ctables_mh.CTables(thisDirectory,
                                                    self.dirIn,
                                                    self.dirOut,
-                                                   self.delimiterIn,
+                                                   delimiterIn,
                                                    self.delimiterOut,
                                                    self.extensionsIn,
                                                    self.batchManifest)

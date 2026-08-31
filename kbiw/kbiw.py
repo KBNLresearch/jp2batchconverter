@@ -20,7 +20,7 @@ from . import shared
 from .workflows import tifftojp2_generic
 from .workflows import tifftojp2_mh
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 # Create parser
 parser = argparse.ArgumentParser(description="KB Image Workflow tool")
