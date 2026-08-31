@@ -61,7 +61,6 @@ class Workflow:
         # Flag that activates automatic conversion of paletted input images to a regular colorspace
         self.convertPalettedImages = False
 
-
     def processBatch(self):
         """Process a batch"""
 
@@ -149,10 +148,10 @@ class Workflow:
 
         for dirname, dirnames, filenames in os.walk(self.dirIn):
             for filename in filenames:
-                    thisExtension = os.path.splitext(filename)[1]
-                    thisExtension = thisExtension.upper().strip('.')
-                    if thisExtension in self.extensionsIn:
-                        self.noFilesToConvert += 1
+                thisExtension = os.path.splitext(filename)[1]
+                thisExtension = thisExtension.upper().strip('.')
+                if thisExtension in self.extensionsIn:
+                    self.noFilesToConvert += 1
 
         print("Found {} images to convert in batch".format(self.noFilesToConvert))
 
@@ -188,12 +187,12 @@ class Workflow:
                     # Update concordance tables
                     print("Updating concordance tables from directory {}".format(thisDirectory))
                     myCTables = ctables_mh.CTables(thisDirectory,
-                                                self.dirIn,
-                                                self.dirOut,
-                                                self.delimiterIn,
-                                                self.delimiterOut,
-                                                self.extensionsIn,
-                                                self.batchManifest)
+                                                   self.dirIn,
+                                                   self.dirOut,
+                                                   self.delimiterIn,
+                                                   self.delimiterOut,
+                                                   self.extensionsIn,
+                                                   self.batchManifest)
                     myCTables.update()
 
             # Actual image conversion/processing loop
@@ -233,7 +232,6 @@ class Workflow:
         print("Workflow completed with {} errors and {} warnings. See log file for details.".format(
             self.noErrors, self.noWarnings))
 
-
     def processFile(self, filename, dirname):
         """Process one file """
         if filename.startswith("._"):
@@ -254,7 +252,7 @@ class Workflow:
                     writer = csv.writer(fManifest, delimiter=self.delimiterOut)
                     # add two empy columns to fit access fields
                     rowBm = self.tifftoJP2Instance.rowBm
-                    rowBm.extend(["na","na"])
+                    rowBm.extend(["na", "na"])
                     writer.writerow(rowBm)
 
                 # Write row to checksum file
@@ -265,8 +263,8 @@ class Workflow:
                 # Update counter and update console progress info
                 self.noFilesConverted += 1
                 percentConverted = "{:.2f}".format(100*(self.noFilesConverted/self.noFilesToConvert))
-                print("Converted {}/{} images ({}%)".format(self.noFilesConverted, self.noFilesToConvert, percentConverted))
-
+                print("Converted {}/{} images ({}%)".format(self.noFilesConverted, self.noFilesToConvert,
+                                                            percentConverted))
 
     def copyAccessDir(self, dirIn):
         """Copy dir with access image to output batch and verify checksums"""
