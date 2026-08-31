@@ -18,6 +18,7 @@ from . import grok
 from . import vips
 from . import propertiescheck
 
+
 class TiffToJP2:
     """TIFF to JP2 conversion and quality checks"""
 
@@ -52,7 +53,6 @@ class TiffToJP2:
         # Output checksum
         self.checksum = ""
 
-
     def configure(self):
         # Start Grok class instance
         self.grokInstance = grok.Grok()
@@ -69,7 +69,6 @@ class TiffToJP2:
 
         # Start Vips instance
         self.vipsInstance = vips.Vips(self.configDict["vipsBinDir"])
-
 
     def convertImage(self, fileIn):
         """Process one image"""
@@ -115,7 +114,7 @@ class TiffToJP2:
                     pcSuccess = self.vipsInstance.convertPaletted(fileIn, fTmp)
                     logging.info(
                         "palette conversion successful: {}".format(pSuccess))
-            except:
+            except Exception:
                 logging.warning(
                     "ExifTool couldn't extract IFD0:PhotometricInterpretation tag")
                 self.noWarnings += 1
@@ -193,7 +192,7 @@ class TiffToJP2:
                 # Check on pixel values (skip for paletted images, because LibVips can't handle paletted JP2s)
                 if not pallettedFlag:
                     ssDiff = self.vipsInstance.sumSqDiff(fileIn, fileOut)
-                    if ssDiff == None:
+                    if ssDiff is None:
                         logging.error("pixel check failed with exception")
                         self.noErrors += 1
                     if ssDiff == 0:
@@ -223,10 +222,9 @@ class TiffToJP2:
 
             # Batch manifest row
             self.rowBm = [fileOutRel,
-                successGrok,
-                successExifTool,
-                pallettedFlag,
-                successPixelCheck,
-                successJpylyzerCheck,
-                schTestsFailedStr]
-
+                          successGrok,
+                          successExifTool,
+                          pallettedFlag,
+                          successPixelCheck,
+                          successJpylyzerCheck,
+                          schTestsFailedStr]
