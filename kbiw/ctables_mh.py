@@ -109,7 +109,7 @@ class CTables:
 
                     rowOut.append(fOut)
 
-                    colIndex +=1
+                    colIndex += 1
 
                 rowIndex += 1
 
@@ -171,7 +171,7 @@ class CTables:
 
             for image in imagesCTable:
                 # Check against batch manifest
-                if not image in imagesManifest:
+                if image not in imagesManifest:
                     logging.error(
                         "image {} not found in batch manifest".format(image))
                     self.noErrors += 1
@@ -180,7 +180,7 @@ class CTables:
 
         # Reverse check
         for image in imagesManifest:
-            if not image in imagesAllCTables:
+            if image not in imagesAllCTables:
                 logging.error(
                     "image {} from batch manifest not referenced in any concordance table".format(image))
                 self.noErrors += 1
