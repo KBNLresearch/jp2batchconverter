@@ -4,6 +4,7 @@
 import os
 import sys
 
+
 class Vips:
     """Vips class"""
 

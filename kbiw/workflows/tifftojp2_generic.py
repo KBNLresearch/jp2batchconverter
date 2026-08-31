@@ -120,10 +120,10 @@ class Workflow:
 
         for dirname, dirnames, filenames in os.walk(self.dirIn):
             for filename in filenames:
-                    thisExtension = os.path.splitext(filename)[1]
-                    thisExtension = thisExtension.upper().strip('.')
-                    if thisExtension in self.extensionsIn:
-                        self.noFilesToConvert += 1
+                thisExtension = os.path.splitext(filename)[1]
+                thisExtension = thisExtension.upper().strip('.')
+                if thisExtension in self.extensionsIn:
+                    self.noFilesToConvert += 1
 
         print("Found {} images to convert in batch".format(self.noFilesToConvert))
 
@@ -137,7 +137,6 @@ class Workflow:
 
             for filename in filenames:
                 self.processFile(filename, dirname)
-
 
         # Dictionary with key/value pairs for summary file
         summaryDict = {"kbiwVersion": self.kbiwVersion,
@@ -155,7 +154,6 @@ class Workflow:
         # Number of errors, warnings to console
         print("Workflow completed with {} errors and {} warnings. See log file for details.".format(
             self.noErrors, self.noWarnings))
-
 
     def processFile(self, filename, dirname):
         """Process one file """
@@ -187,8 +185,8 @@ class Workflow:
                 # Update counter and update console progress info
                 self.noFilesConverted += 1
                 percentConverted = "{:.2f}".format(100*(self.noFilesConverted/self.noFilesToConvert))
-                print("Converted {}/{} images ({}%)".format(self.noFilesConverted, self.noFilesToConvert, percentConverted))
-
+                print("Converted {}/{} images ({}%)".format(self.noFilesConverted,
+                                                            self.noFilesToConvert, percentConverted))
 
     def copyDir(self, dirIn):
         """Copy input dir to same relative location in output batch"""
