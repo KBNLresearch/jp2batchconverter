@@ -6,11 +6,11 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import logging
 
+
 class SummaryFile:
     """SummaryFile class"""
 
     def __init__(self, summaryFile, summaryDict):
-
 
         self.summaryFile = summaryFile
         self.summaryDict = summaryDict
@@ -21,7 +21,6 @@ class SummaryFile:
 
         el = ET.SubElement(element, tag)
         el.text = str(text)
-
 
     def writeSummaryFile(self):
         """Write summary file """
@@ -49,6 +48,5 @@ class SummaryFile:
             with open(self.summaryFile, 'w', newline='', encoding='utf-8') as fSum:
                 fSum.write(xmlPretty)
         except Exception:
-                logging.error("cannot write summary file to {}".format(self.summaryFile))
-                self.noErrors += 1
-
+            logging.error("cannot write summary file to {}".format(self.summaryFile))
+            self.noErrors += 1
