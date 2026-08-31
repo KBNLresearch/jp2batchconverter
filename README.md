@@ -269,11 +269,9 @@ This workflow is identical to the *tifftojp2-generic* workflow, but with the fol
 
 Workflow for batches from the "Middeleeuwse Handschriften" (Medieval Manuscripts) project. This workflow is largely identical to the *tifftojp2-generic* workflow, but with the following additions:
 
-- Read concordance tables from the input batch, and write corresponding concordance tables to the output batch, and update all references to TIFF images to JP2. Any references to non-TIFF images (e.g. access JPEGs) are copied verbatim.
+- Read concordance tables from the input batch, and write corresponding concordance tables to the output batch, and update all references to TIFF images to JP2. Also add file path (relative to batch root) to each entry.
 - Perform a two-way check on the output concordance tables: first check that all JP2 images defined in the concordance tables exist in the output batch, and then also check that all JP2 images in the output batch are defined in the concordance tables.
-- Create verbatim copies of the directories "Pakbon" and "Access_Rename".
-
-Note that at present, the entries in the "Middeleeuwse Handschriften" concordance tables don't include direct file path references. For the master images, the path follows from the name of the concordance table file, and for the targets it follows from the name of the target image.
+- Create verbatim copies of the directories "Pakbon" and "Access_Rename". For the latter, check that all checksum values are identical to the values in the source batch.
 
 ### tifftojp2-ie
 
