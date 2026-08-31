@@ -20,7 +20,7 @@ from . import shared
 from .workflows import tifftojp2_generic
 from .workflows import tifftojp2_mh
 
-__version__ = "0.1.2"
+__version__ = "0.2.0"
 
 # Create parser
 parser = argparse.ArgumentParser(description="KB Image Workflow tool")
@@ -40,8 +40,8 @@ def parseCommandLine():
     parser.add_argument("workflow",
                         action="store",
                         type=str,
-                        help="workflow (tifftojp2-generic, tifftojp2-generic-convertpaletted, tifftojp2-mh, \
-                        tifftojp2-ie)")
+                        help="workflow (tifftojp2-generic, tifftojp2-generic-convertpaletted, \
+                            tifftojp2-mh, tifftojp2-ie)")
     parser.add_argument("--version", "-v",
                         action="version",
                         version=__version__)
@@ -221,8 +221,6 @@ def main():
                        "Rapportages_meetresultaten",
                        "Rapportages_onregelmatigheden",
                        "rapporten HeronQAE TC 5"]
-        # No processing of concordance tables
-        wf.processCTables = False
     elif workflow == "tifftojp2-generic":
         # Generic workflow - input batch only contains TIFF images
         wf = tifftojp2_generic.Workflow()
@@ -231,8 +229,6 @@ def main():
         wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check
         wf.schema = "kbMaster_2026.sch"
-        # No processing of concordance tables
-        wf.processCTables = False
     elif workflow == "tifftojp2-generic-convertpaletted":
         # Generic workflow - input batch only contains TIFF images
         # Convert any paletted TIFFs to (temporary) "normal" TIFF
@@ -242,8 +238,6 @@ def main():
         wf.compressionProfile = "KB_MASTER_LOSSLESS_10/06/2026"
         # Schematron schema used for properties check
         wf.schema = "kbMaster_2026.sch"
-        # No processing of concordance tables
-        wf.processCTables = False
         # Convert paletted images to regular colorspace
         wf.convertPalettedImages = True
 
