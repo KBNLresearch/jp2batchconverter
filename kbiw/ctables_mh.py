@@ -104,7 +104,7 @@ class CTables:
                                 nameComponents[0], nameComponents[2], nameComponents[3])
                         except IndexError:
                             targetDir = ""
-                            logging.error("couldn't construct directory path for target {fNameOut}".format())
+                            logging.error("couldn't construct directory path for target {}".format(fNameOut))
                         fOut = os.path.join("Targets", targetDir, fNameOut)
 
                     rowOut.append(fOut)
