@@ -80,7 +80,7 @@ class CTables:
 
                     if fNameIn == "":
                         emptyFlag = True
-                        logging.warning("empty entry in concordance table {} (column ''{}')".format(fileIn, headerValue))
+                        logging.warning("empty entry in concordance table {}, (column '{}')".format(fileIn, headerValue))
                         self.noWarnings += 1
                     if not emptyFlag:
                         # Header value
@@ -179,7 +179,9 @@ class CTables:
             for row in cTabData:
                 if rowIndex > 0:
                     for col in row:
-                        imagesCTable.append(col)
+                        if col != "":
+                            # Skip empty records
+                            imagesCTable.append(col)
                         colIndex += 1
                 rowIndex += 1
 
