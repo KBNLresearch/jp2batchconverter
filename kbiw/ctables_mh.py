@@ -14,6 +14,7 @@ class CTables:
                  delimiterOut, extensionsIn, batchManifest):
 
         self.noErrors = 0
+        self.noWarnings = 0
         self.dirConcordanceIn = dirConcordanceIn
         self.dirIn = dirIn
         self.dirOut = dirOut
@@ -79,6 +80,9 @@ class CTables:
                     # File prefix and extension
                     pre, ext = os.path.splitext(fNameIn)
                     ext = ext.strip(".").upper()
+                    if fNameIn == "":
+                        logging.warning("empty entry in concordance table {} (column ''{}')".format(fileIn, headerValue))
+                        self.noWarnings += 1
 
                     # Update file extension if needed
                     if ext in self.extensionsIn:
@@ -90,10 +94,10 @@ class CTables:
                     if headerValue == "Master":
                         fOut = os.path.join(masterDirPath, fNameOut)
 
-                    if headerValue == "Access_Renamed":
+                    elif headerValue == "Access_Renamed":
                         fOut = os.path.join(accessDirPath, fNameOut)
 
-                    if headerValue.startswith("Targets"):
+                    elif headerValue.startswith("Targets"):
                         # Target location follows from file base name
                         try:
                             nameComponents = pre.split("_")
@@ -106,6 +110,9 @@ class CTables:
                             targetDir = ""
                             logging.error("couldn't construct directory path for target {}".format(fNameOut))
                         fOut = os.path.join("Targets", targetDir, fNameOut)
+                    else:
+                        logging.warning("unknown header value '{}' in concordance table {}".format(headerValue, fileIn))
+                        self.noWarnings += 1
 
                     rowOut.append(fOut)
 

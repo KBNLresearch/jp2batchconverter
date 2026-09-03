@@ -202,8 +202,9 @@ class Workflow:
         try:
             myCTables.verify()
 
-            # Add any errors from concordance updating / checking to general error count
+            # Add any errors and warnings from concordance updating / checking to general error, warning count
             self.noErrors += myCTables.noErrors
+            self.noWarnings += myCTables.noWarnings
         except UnboundLocalError:
             # We end up here if myCtables is undefined
             logging.error("no concordance tables found in batch")
