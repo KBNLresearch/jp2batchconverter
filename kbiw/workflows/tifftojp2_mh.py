@@ -124,8 +124,8 @@ class Workflow:
                             "successPixelCheck",
                             "successJpylyzerCheck",
                             "failedJpylyzerChecks",
-                            "succesFileMatch",
-                            "succesChecksumCheck"]
+                            "successFileMatch",
+                            "successChecksumCheck"]
 
         with open(self.batchManifest, 'w', newline='', encoding='utf-8') as fManifest:
             writer = csv.writer(fManifest, delimiter=self.delimiterOut)

@@ -245,8 +245,8 @@ For the MH (Middeleeuwse Handschriften) workflow, two additional columns are rep
 
 |Column|Meaning|
 |:--|:--|
-|succesFileMatch|True/False flag that indicates if a file that was copied from the source batch could be matched against an entry in the corresponding checksum file|
-|succesChecksumCheck|True/False flag that indicates if the checksum for a file that was copied from the source batch was successful|
+|successFileMatch|True/False flag that indicates if a file that was copied from the source batch could be matched against an entry in the corresponding checksum file|
+|successChecksumCheck|True/False flag that indicates if the checksum for a file that was copied from the source batch was successful|
 
 These are *only* reported for (access) files that were copied from the source batch. For these files, all other fields have the value "na". Conversely, for converted images these fields always have the value "na".
 
